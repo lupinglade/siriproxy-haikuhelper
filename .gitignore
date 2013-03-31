@@ -1,9 +1,7 @@
 *.gem
-<<<<<<< HEAD
 .bundle
 Gemfile.lock
 pkg/*
-=======
 *.rbc
 .bundle
 .config
@@ -16,9 +14,6 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
-
-# YARD artifacts
 .yardoc
 _yardoc
 doc/
->>>>>>> 0d141be3ea3418b361453ea909f3576a041d310a

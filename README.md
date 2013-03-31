@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # siriproxy-haikuhelper
 
 Integrates HaikuHelper with Siri-Proxy
@@ -49,9 +48,3 @@ Note: this plugin will use the best available description for an object, ie. it 
 * Fork the project.
 * Make your feature addition or bug fix.
 * Send me a pull request.
-=======
-siriproxy-haikuhelper
-=====================
-
-Siri-Proxy HaikuHelper home automation plugin.
->>>>>>> 0d141be3ea3418b361453ea909f3576a041d310a
