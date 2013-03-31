@@ -4,9 +4,20 @@ Integrates HaikuHelper with Siri-Proxy
 
 ## Install
 
+Add this configuration entry to your ~/.siriproxy/config.yml:
+
 ```
-gem install siriproxy-haikuhelper
+    - name: 'HaikuHelper'
+      git: 'git://github.com/lupinglade/siriproxy-haikuhelper.git'
+      #path: './plugins/siriproxy-haikuhelper'
+      url: 'http://localhost:9399'
+      controller_name: 'My Home'
+      password: 'secret'
 ```
+
+Don't forget to set the url/controller_name and password correctly.
+
+Then run siriproxy bundle (this will load the plugin from this git repository and install the httparty gem if needed)
 
 ## Requirements
 
