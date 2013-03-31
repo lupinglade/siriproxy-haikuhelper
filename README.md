@@ -49,6 +49,8 @@ The last one reloads the object names from the HaikuHelper API, which is useful 
 
 Note: this plugin will use the best available description for an object, ie. it will first try to use a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to use the name set on the controller.
 
+Note 2: security code validation is not yet working
+
 ## Help and Docs
 
 * https://github.com/plamoni/SiriProxy
