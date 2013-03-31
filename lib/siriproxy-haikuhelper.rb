@@ -278,8 +278,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #Query commands
 
-  #(What is the) outdoor temperature?
-  listen_for /outdoor temperature/i do
+  #What is the outdoor temperature?
+  listen_for /what is the outdoor temperature/i do
     outdoor_temp = api "controller.outdoorTemperatureSensor.valueDescription"
 
     if outdoor_temp.nil?
@@ -291,7 +291,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  listen_for /outdoor humidity/i do
+  #What is the outdoor humidity?
+  listen_for /what is the outdoor humidity/i do
     outdoor_humidity = api "controller.outdoorHumiditySensor.valueDescription"
 
     if outdoor_humidity.nil?
