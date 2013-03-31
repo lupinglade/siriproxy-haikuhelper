@@ -184,7 +184,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Are you sure you want to activate button #{button_name}?"
 
-      if(response =~ /yes/i)
+      if(response =~ CONFIRM_REGEX)
         oid = button["oid"]
         api "helper.objectWithOID('#{oid}').activate()"
         say "Okay, button #{button_name} activated."
@@ -200,7 +200,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   listen_for /all lights (on|off)/i do |action|
     response = ask "Are you sure you want to turn #{action} all of the lights?"
 
-    if(response =~ /yes/i)
+    if(response =~ CONFIRM_REGEX)
       if action == "on"
         api "controller.sendAllLightsOnCommand()"
       else
