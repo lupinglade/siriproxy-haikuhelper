@@ -107,6 +107,12 @@ open ~/.siriproxy/
 rvmsudo siriproxy server -d XXX.XXX.XXX.XXX -u nobody
 ```
 
+If you get an error about port 443 or 53 being in use, make sure your machine is not running a web server or DNS server. On OS X Mountain Lion (and Lion) Server you will need to unload the httpd service:
+
+```
+sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
+```
+
 * Tell your phone to use your SiriProxy server's IP as its DNS server (under Settings > Wi-Fi > Your network)
 
 * Test the server by telling Siri "helper status"
