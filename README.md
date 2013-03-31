@@ -51,10 +51,11 @@ Note: this plugin will use the best available description for an object, ie. it 
 
 Note 2: security code validation is not yet working
 
-## Help and Docs
+## Links
 
 * https://github.com/plamoni/SiriProxy
 * http://www.haikuautomation.com/
+* http://www.nullriver.com/
 
 ## Contributing
 
