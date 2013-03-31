@@ -1,0 +1,322 @@
+require 'cora'
+require 'siri_objects'
+require 'pp'
+require 'haikuhelper'
+
+
+class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
+  def initialize(config)
+    if config["url"].nil?
+      puts "siriproxy-haikuhelper: Missing configuration, please define url, controller_name and password in your config.yml file." 
+    else
+      @helper = HaikuHelperAPI.new config["url"], config["controller_name"], config["password"]
+      reload
+    end
+  end
+
+  #HH API shorthand
+  def api(cmd)
+    @helper.api cmd
+  end
+
+  #Reloads configuration from HH server
+  def reload
+    @readers = api "controller.accessControlReaders"
+    @areas = api "controller.areas"
+    @audio_zones = api "controller.audioZones"
+    @buttons = api "controller.buttons"
+    @units = api "controller.units"
+    @zones = api "controller.zones"
+  end
+
+  #Finding methods
+
+  #Find an object by name inside objects
+  def find_object_by_name(objects, name)
+    objects.detect { |o| o["bestDescription"].casecmp(name) == 0 }
+  end
+
+ #Find OID for a light by name
+  def find_light(name, room_name = nil)
+    @units.detect { |l| l["bestDescription"].casecmp(name) == 0 && (room_name == nil || l["roomDescription"] =~ /#{Regexp.escape(room_name)}/i) }
+  end
+
+  #Voice commands
+
+  #Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation (the) area_name
+  listen_for /(disarm|arm day instant|arm night delayed|arm day|arm night|arm away|arm vacation)(?: the)? (.*)/i do |mode,area_name|
+    area_name.strip!
+    area = find_object_by_name @areas, area_name
+  
+    if area.nil?
+      say "I couldn't find an area named #{area_name}!"
+    else
+      response = ask "Please say your security code to #{mode} #{area_name}:"
+
+      if(response.downcase != "cancel")
+        oid = area["oid"]
+
+        case mode.downcase
+          when "disarm"
+            api "helper.objectWithOID('#{oid}').setMode(0)"
+            say "Okay, the #{area_name} has been disarmed!"
+          when "arm day"
+            api "helper.objectWithOID('#{oid}').setMode(1)"
+            say "Arming the #{area_name} in mode day..."
+          when "arm night"
+            api "helper.objectWithOID('#{oid}').setMode(2)"
+            say "Arming the #{area_name} in mode night..."
+          when "arm away"
+            api "helper.objectWithOID('#{oid}').setMode(3)"
+            say "Arming the #{area_name} in mode away..."
+          when "arm vacation"
+            api "helper.objectWithOID('#{oid}').setMode(4)"
+            say "Arming the #{area_name} in mode vacation..."
+          when "arm day instant"
+            api "helper.objectWithOID('#{oid}').setMode(5)"
+            say "Arming the #{area_name} in mode day instant..."
+          when "arm night delayed"
+            api "helper.objectWithOID('#{oid}').setMode(6)"
+            say "Arming the #{area_name} in mode night delayed..."
+        end
+      else
+        say "Sorry, your security code could not be validated."
+      end
+    end
+
+    request_completed
+  end
+
+  #Lock|Unlock (the) reader_name
+  listen_for /(unlock|lock)(?: the)? (.*)/i do |action,reader_name|
+    reader_name.strip!
+    reader = find_object_by_name @readers, reader_name
+  
+    if reader.nil?
+      say "I couldn't find an access control named #{reader_name}!"
+    else
+      response = ask "Please say your security code to #{action} #{reader_name}:"
+
+      if(response.downcase != "cancel")
+        oid = reader["oid"]
+
+        case action.downcase
+          when "unlock"
+            api "helper.objectWithOID('#{oid}').unlock()"
+            say "Okay, #{reader_name} has been unlocked."
+          when "lock"
+            api "helper.objectWithOID('#{oid}').lock()"
+            say "Okay, #{reader_name} has been lock."
+        end
+      else
+        say "Sorry, your security code could not be validated."
+      end
+    end
+
+    request_completed
+  end
+
+  #Audio on|off|mute|unmute in (the) audio_zone_name
+  listen_for /(?:audio|music|speakers) (on|off|mute|unmute) in(?: the)? (.*)/i do |action,audio_zone_name|
+    audio_zone_name.strip!
+    audio_zone = find_object_by_name @audio_zones, audio_zone_name
+  
+    if audio_zone.nil?
+      say "I couldn't find an audio zone named #{audio_zone_name}!"
+    else
+      oid = audio_zone["oid"]
+
+      case action.downcase
+        when "on"
+          api "helper.objectWithOID('#{oid}').on()"
+          say "Okay, #{audio_zone_name} audio has been turned on."
+        when "off"
+          api "helper.objectWithOID('#{oid}').off()"
+          say "Okay, #{audio_zone_name} audio has been turned off."
+        when "mute"
+          api "helper.objectWithOID('#{oid}').mute()"
+          say "Okay, #{audio_zone_name} audio has been muted."
+        when "unmute"
+          api "helper.objectWithOID('#{oid}').unmute()"
+          say "Okay, #{audio_zone_name} audio has been unmuted."
+      end
+    end
+
+    request_completed
+  end
+
+  #Bypass|Restore (the) zone_name
+  listen_for /(bypass|restore)(?: the)? (.*)/i do |action,zone_name|
+    zone_name.strip!
+    zone = find_object_by_name @zones, zone_name
+  
+    if zone.nil?
+      say "I couldn't find a zone named #{zone_name}!"
+    else
+      response = ask "Please say your security code to #{action} #{zone_name}:"
+
+      if(response.downcase != "cancel")
+        oid = zone["oid"]
+
+        case action.downcase
+          when "bypass"
+            api "helper.objectWithOID('#{oid}').bypass()"
+            say "Okay, #{zone_name} has been bypassed."
+          when "restore"
+            api "helper.objectWithOID('#{oid}').restore()"
+            say "Okay, #{zone_name} has been restored."
+        end
+      else
+        say "Sorry, your security code could not be validated."
+      end
+    end
+
+    request_completed
+  end
+
+  #Macro button_name
+  listen_for /macro (.*)/i do |button_name|
+    button_name.strip!
+    button = find_object_by_name @buttons, button_name
+  
+    if button.nil?
+      say "I couldn't find a button named #{button_name}!"
+    else
+      response = ask "Are you sure you want to activate button #{button_name}?"
+
+      if(response =~ /yes/i)
+        oid = button["oid"]
+        api "helper.objectWithOID('#{oid}').activate()"
+        say "Okay, button #{button_name} activated."
+      else
+        say "Alright, I won't activate it."
+      end
+    end
+
+    request_completed
+  end
+
+  #All lights on|off
+  listen_for /all lights (on|off)/i do |action|
+    response = ask "Are you sure you want to turn #{action} all of the lights?"
+
+    if(response =~ /yes/i)
+      if action == "on"
+        api "controller.sendAllLightsOnCommand()"
+      else
+        api "controller.sendAllLightsOffCommand()"
+      end
+        say "Turning #{action} all of the lights."
+    else
+      say "Alright, cancelled."
+    end
+
+    request_completed
+  end
+
+  #Turn on|off (the) light_name in (the) room_name
+  listen_for /(turn on|turn off|brighten|dim)(?: the)? (.*) in(?: the)? (.*)/i do |action, light_name, room_name|
+    room_name.strip!
+    light = find_light light_name, room_name
+  
+    if light.nil?
+      if room_name.nil?
+        say "I couldn't find a unit named #{light_name}!"
+      else
+        say "I couldn't find a unit named #{light_name} in the #{room_name}!"
+      end
+    else
+      oid = light["oid"]
+
+      case action.downcase
+        when "turn on"
+          api "helper.objectWithOID('#{oid}').on()"
+          say "Okay, unit #{light_name} turned on."
+        when "turn off"
+          api "helper.objectWithOID('#{oid}').off()"
+          say "Okay, unit #{light_name} turned off."
+        when "brighten"
+          api "helper.objectWithOID('#{oid}').brighten(3)"
+          say "Okay, unit #{light_name} brightened."
+        when "dim"
+          api "helper.objectWithOID('#{oid}').dim(3)"
+          say "Okay, unit #{light_name} dimmed."
+      end
+    end
+
+    request_completed
+  end
+
+  #Turn on|off (the) light_name
+  listen_for /(turn on|turn off|brighten|dim)(?: the)? (.*)/i do |action, light_name|
+    light_name.strip!
+    light = find_light light_name
+  
+    if light.nil?
+      say "I couldn't find a unit named #{light_name}!"
+    else
+      oid = light["oid"]
+
+      case action.downcase
+        when "turn on"
+          api "helper.objectWithOID('#{oid}').on()"
+          say "Okay, unit #{light_name} turned on."
+        when "turn off"
+          api "helper.objectWithOID('#{oid}').off()"
+          say "Okay, unit #{light_name} turned off."
+        when "brighten"
+          api "helper.objectWithOID('#{oid}').brighten(3)"
+          say "Okay, unit #{light_name} brightened."
+        when "dim"
+          api "helper.objectWithOID('#{oid}').dim(3)"
+          say "Okay, unit #{light_name} dimmed."
+      end
+    end
+
+    request_completed
+  end
+
+  #Query commands
+
+  #(What is the) outdoor temperature?
+  listen_for /outdoor temperature/i do
+    outdoor_temp = api "controller.outdoorTemperatureSensor.valueDescription"
+
+    if outdoor_temp.nil?
+      say "The outdoor temperature is unavailable!"
+    else
+      say "The outdoor temperature is #{outdoor_temp}."
+    end
+
+    request_completed
+  end
+
+  listen_for /outdoor humidity/i do
+    outdoor_humidity = api "controller.outdoorHumiditySensor.valueDescription"
+
+    if outdoor_humidity.nil?
+      say "The outdoor humidity is unavailable!"
+    else
+      say "The outdoor humidity is #{outdoor_humidity}."
+    end
+
+    request_completed
+  end
+
+
+  #Configuration commands
+
+  listen_for /helper reload/i do
+    say "Reloading configuration!"
+    reload
+
+    request_completed
+  end
+
+  listen_for /helper status/i do
+    status = api "controller.statusDescription"
+    say "HaikuHelper control is available, remote helper status is: #{status}"
+
+    request_completed
+  end
+end
