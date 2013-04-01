@@ -1,5 +1,6 @@
     - name: 'HaikuHelper'
-      path: './plugins/siriproxy-haikuhelper'
+      git: 'git://github.com/lupinglade/siriproxy-haikuhelper.git'
+      #path: './plugins/siriproxy-haikuhelper'
       url: 'http://localhost:9399'
       controller_name: 'My Home'
       password: 'secret'
