@@ -224,9 +224,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #{Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
-  listen_for /\b(turn on|turn off|brighten|dim)(?: the )?(.*?)(?: in (?:the )?(.*?))?\b/i do |action, light_name, room_name|
-    light_name.strip!
-    room_name.strip!
+  listen_for /\b(turn on|turn off|brighten|dim)(?: the )?(.*?)(?: in (?:the )?(.*?))? ?$/i do |action, light_name, room_name|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -258,8 +256,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #Set (the) {light_name} (in (the) {room_name}) to {0-100}
-  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)\b/i do |light_name, room_name, percent|
-    room_name.strip!
+  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?) ?$/i do |light_name, room_name, percent|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
