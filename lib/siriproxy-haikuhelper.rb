@@ -60,11 +60,10 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #{Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation} (the) {area_name}
   listen_for /\b(disarm|arm day instant|arm night delayed|arm day|arm night|arm away|arm vacation)(?: the)? (.*)\b/i do |mode,area_name|
-    area_name.strip!
     area = find_object_by_name @areas, area_name
   
     if area.nil?
-      say "I couldn't find an area named #{area_name}!"
+      say "Sorry, I couldn't find an area named #{area_name}!"
     else
       response = ask "Please say your security code to #{mode} #{area_name}:"
 
@@ -102,12 +101,32 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
+  #{Lock|Unlock} all (the|of the) {locks|readers|access control readers}
+  listen_for /\b(unlock|lock)(?: the| of the)? (locks|readers|access control readers)\b/i do |action|
+    response = ask "Please say your security code to #{action} all locks:"
+
+    if(response.downcase != "cancel")
+      case action.downcase
+        when "unlock"
+          api "controller.lockAllLocks()"
+          say "Okay, all locks have been locked"
+        when "lock"
+          api "controller.unlockAllLocks()"
+          say "Okay, all locks have been unlocked"
+      end
+    else
+      say "Sorry, your security code could not be validated."
+    end
+
+    request_completed
+  end
+
   #{Lock|Unlock} (the) {reader_name}
   listen_for /\b(unlock|lock)(?: the)? (.*)\b/i do |action,reader_name|
     reader = find_object_by_name @readers, reader_name
   
     if reader.nil?
-      say "I couldn't find an access control named #{reader_name}!"
+      say "Sorry, I couldn't find an access control named #{reader_name}!"
     else
       response = ask "Please say your security code to #{action} #{reader_name}:"
 
@@ -130,40 +149,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #{Audio|Music|Speakers} {on|off|mute|unmute} in (the) {audio_zone_name}
-  listen_for /\b(?:audio|music|speakers) (on|off|mute|unmute) in(?: the)? (.*)\b/i do |action,audio_zone_name|
-    audio_zone = find_object_by_name @audio_zones, audio_zone_name
-  
-    if audio_zone.nil?
-      say "I couldn't find an audio zone named #{audio_zone_name}!"
-    else
-      oid = audio_zone["oid"]
-
-      case action.downcase
-        when "on"
-          api "helper.objectWithOID('#{oid}').on()"
-          say "Okay, #{audio_zone_name} audio has been turned on."
-        when "off"
-          api "helper.objectWithOID('#{oid}').off()"
-          say "Okay, #{audio_zone_name} audio has been turned off."
-        when "mute"
-          api "helper.objectWithOID('#{oid}').mute()"
-          say "Okay, #{audio_zone_name} audio has been muted."
-        when "unmute"
-          api "helper.objectWithOID('#{oid}').unmute()"
-          say "Okay, #{audio_zone_name} audio has been unmuted."
-      end
-    end
-
-    request_completed
-  end
-
   #{Bypass|Restore} (the) {zone_name}
   listen_for /\b(bypass|restore)(?: the)? (.*)\b/i do |action,zone_name|
     zone = find_object_by_name @zones, zone_name
   
     if zone.nil?
-      say "I couldn't find a zone named #{zone_name}!"
+      say "Sorry, I couldn't find a zone named #{zone_name}!"
     else
       response = ask "Please say your security code to #{action} #{zone_name}:"
 
@@ -186,12 +177,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #Macro {button_name}
-  listen_for /\bmacro (.*)\b/i do |button_name|
+  #{Macro|Button} {button_name}
+  listen_for /\b(?:macro|button) (.*)\b/i do |button_name|
     button = find_object_by_name @buttons, button_name
   
     if button.nil?
-      say "I couldn't find a button named #{button_name}!"
+      say "Sorry, I couldn't find a button named #{button_name}!"
     else
       response = ask "Are you sure you want to activate button #{button_name}?"
 
@@ -201,6 +192,141 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         say "Okay, button #{button_name} activated."
       else
         say "Alright, I won't activate it."
+      end
+    end
+
+    request_completed
+  end
+
+  #All {music|audio|speakers|audio zones} {on|off|mute|unmute}
+  listen_for /\ball (?:music|audio|speakers|audio zones) (on|off|mute|unmute)\b/i do |action|
+    case action
+      when "on"
+        api "controller.sendAllAudioZonesOnCommand()"
+        say "Okay, all audio zones have been turned on."
+      when "off"
+        api "controller.sendAllAudioZonesOffCommand()"
+        say "Okay, all audio zones have been turned off."
+      when "mute"
+        api "controller.sendAllAudioZonesMuteCommand()"
+        say "Okay, all audio zones have been muted."
+      when "unmute"
+        api "controller.sendAllAudioZonesUnmuteCommand()"
+        say "Okay, all audio zones have been unmuted."
+    end
+
+    request_completed
+  end
+
+  #{Audio|Music|Speakers|Audio zone} {on|off|mute|unmute} in (the) {audio_zone_name}
+  listen_for /\b(?:audio|music|speakers|audio zone) (on|off|mute|unmute) in(?: the)? (.*)\b/i do |action,audio_zone_name|
+    audio_zone = find_object_by_name @audio_zones, audio_zone_name
+  
+    if audio_zone.nil?
+      say "Sorry, I couldn't find an audio zone named #{audio_zone_name}!"
+    else
+      oid = audio_zone["oid"]
+
+      case action.downcase
+        when "on"
+          api "helper.objectWithOID('#{oid}').on()"
+          say "Okay, #{audio_zone_name} audio has been turned on."
+        when "off"
+          api "helper.objectWithOID('#{oid}').off()"
+          say "Okay, #{audio_zone_name} audio has been turned off."
+        when "mute"
+          api "helper.objectWithOID('#{oid}').mute()"
+          say "Okay, #{audio_zone_name} audio has been muted."
+        when "unmute"
+          api "helper.objectWithOID('#{oid}').unmute()"
+          say "Okay, #{audio_zone_name} audio has been unmuted."
+      end
+    end
+
+    request_completed
+  end
+
+  #Set the (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
+  listen_for /\bset (?:the )?(.*?) (heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint) to (-?1?[0-9][0-9]?\.?[0-9]?)/i do |thermostat_name, property, value|
+    thermostat = find_object_by_name @thermostats, thermostat_name
+  
+    if thermostat.nil?
+      say "Sorry, I couldn't find a thermostat named #{thermostat_name}!"
+    else
+      oid = thermostat["oid"]
+
+      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value}?"
+
+      if(response =~ CONFIRM_REGEX)
+        case property.downcase
+          when "heat setpoint"
+            api "helper.objectWithOID('#{oid}').setHeatSetpoint(#{value.to_f})"
+            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+          when "cool setpoint"
+            api "helper.objectWithOID('#{oid}').setCoolSetpoint(#{value.to_f})"
+            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+          when "humidify setpoint"
+            api "helper.objectWithOID('#{oid}').setHumidifySetpoint(#{value.to_i})"
+            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+          when "dehumidify setpoint"
+            api "helper.objectWithOID('#{oid}').setDehumidifySetpoint(#{value.to_i})"
+            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+        end
+      else
+        say "Okay, I'll leave it as is."
+      end
+    end
+
+    request_completed
+  end
+
+  #Set the (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
+  listen_for /\bset (?:the )?(.*?) fan setting to (automatic|auto|always on|on|cycle)\b/i do |thermostat_name, value|
+    thermostat = find_object_by_name @thermostats, thermostat_name
+  
+    if thermostat.nil?
+      say "Sorry, I couldn't find a thermostat named #{thermostat_name}!"
+    else
+      oid = thermostat["oid"]
+
+      case value.downcase
+        when "automatic", "auto"
+          api "helper.objectWithOID('#{oid}').setFan(0)"
+          say "Okay, setting the #{thermostat_name} fan setting to #{value}."
+        when "always on", "on"
+          api "helper.objectWithOID('#{oid}').setFan(1)"
+          say "Okay, setting the #{thermostat_name} fan setting to #{value}."
+        when "cycle"
+          api "helper.objectWithOID('#{oid}').setFan(2)"
+          say "Okay, setting the #{thermostat_name} fan setting to #{value}."
+      end
+    end
+
+    request_completed
+  end
+
+  #Set the (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
+  listen_for /\bset (?:the )?(.*?) (high setpoint|low setpoint) to (-?1?[0-9][0-9]?\.?[0-9]?)/i do |sensor_name, property, value|
+    sensor = find_object_by_name @auxiliary_sensors, sensor_name
+  
+    if sensor.nil?
+      say "Sorry, I couldn't find a sensor named #{sensor_name}!"
+    else
+      oid = sensor["oid"]
+
+      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value}?"
+
+      if(response =~ CONFIRM_REGEX)
+        case property.downcase
+          when "high setpoint"
+            api "helper.objectWithOID('#{oid}').setHighSetpoint(#{value.to_f})"
+            say "Okay, setting the #{sensor_name} #{property} to #{value}."
+          when "low setpoint"
+            api "helper.objectWithOID('#{oid}').setLowSetpoint(#{value.to_f})"
+            say "Okay, setting the #{sensor_name} #{property} to #{value}."
+        end
+      else
+        say "Okay, I'll leave it as is."
       end
     end
 
@@ -231,9 +357,9 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   
     if unit.nil?
       if room_name.nil?
-        say "I couldn't find a unit named #{light_name}!"
+        say "Sorry, I couldn't find a unit named #{light_name}!"
       else
-        say "I couldn't find a unit named #{light_name} in the #{room_name}!"
+        say "Sorry, I couldn't find a unit named #{light_name} in the #{room_name}!"
       end
     else
       oid = unit["oid"]
@@ -263,9 +389,9 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   
     if unit.nil?
       if room_name.nil?
-        say "I couldn't find a unit named #{light_name}!"
+        say "Sorry, I couldn't find a unit named #{light_name}!"
       else
-        say "I couldn't find a unit named #{light_name} in the #{room_name}!"
+        say "Sorry, I couldn't find a unit named #{light_name} in the #{room_name}!"
       end
     else
       oid = unit["oid"]
@@ -282,7 +408,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     unit = find_room_unit room_name
   
     if unit.nil?
-      say "I couldn't find a room named #{room_name}!"
+      say "Sorry, I couldn't find a room named #{room_name}!"
     else
       oid = unit["oid"]
 
@@ -306,6 +432,47 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #Query commands
+
+  #What is the energy cost?
+  listen_for /\bwhat is the energy cost\b/i do
+    cost = api "controller.energyCostDescription"
+    say "The current energy cost is: #{cost}"
+
+    request_completed
+  end
+
+  #What is the {area_name} area {status|mode}?
+  listen_for /\bwhat is the (.*?) area (?:status|mode)\b/i do |area_name|
+    area = find_object_by_name @areas, area_name
+  
+    if area.nil?
+      say "Sorry, I couldn't find an area named #{area_name}!"
+    else
+      oid = area["oid"]
+
+      status = api "helper.objectWithOID('#{oid}').statusDescription"
+      mode = api "helper.objectWithOID('#{oid}').modeDescription"
+      say "The #{area_name} is set to #{mode} with status: #{status}."
+    end
+
+    request_completed
+  end
+
+  #What is the {zone_name} zone status?
+  listen_for /\bwhat is the (.*?) zone status\b/i do |zone_name|
+    zone = find_object_by_name @zones, zone_name
+  
+    if zone.nil?
+      say "Sorry, I couldn't find an zone named #{zone_name}!"
+    else
+      oid = zone["oid"]
+
+      status = api "helper.objectWithOID('#{oid}').statusDescription"
+      say "The #{zone_name} zone status is: #{status}."
+    end
+
+    request_completed
+  end
 
   #What is the outdoor temperature?
   listen_for /\bwhat is the outdoor temperature\b/i do
@@ -333,12 +500,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #What is the {temperature|humidity|heat setpoint|cool setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
-  listen_for /\bwhat is the (temperature|humidity|heat setpoint|cool setpoint|mode|fan setting) (in|on|at|for)(?: the)? (.*)\b/i do |property,prep,thermostat_name|
+  #What is the {temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
+  listen_for /\bwhat is the (temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting) (in|on|at|for)(?: the)? (.*)\b/i do |property,prep,thermostat_name|
     thermostat = find_object_by_name @thermostats, thermostat_name
 
     if thermostat.nil?
-      say "I couldn't find a thermostat named #{thermostat_name}!"
+      say "Sorry, I couldn't find a thermostat named #{thermostat_name}!"
     else
       oid = thermostat["oid"]
 
@@ -355,6 +522,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         when "cool setpoint"
           value = api "helper.objectWithOID('#{oid}').coolSetpointDescription"
           say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+        when "humidify setpoint"
+          value = api "helper.objectWithOID('#{oid}').humidifySetpointDescription"
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+        when "dehumidify setpoint"
+          value = api "helper.objectWithOID('#{oid}').dehumidifySetpointDescription"
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
         when "mode"
           value = api "helper.objectWithOID('#{oid}').modeDescription"
           say "The #{property} #{prep} the #{thermostat_name} is #{value}."
@@ -367,12 +540,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #What is the {value|high setpoint|low setpoint|} for (the) {sensor_name}?
+  #What is the {value|high setpoint|low setpoint} for (the) {sensor_name}?
   listen_for /\bwhat is the (value|high setpoint|low setpoint) for(?: the)? (.*)\b/i do |property,sensor_name|
     sensor = find_object_by_name @auxiliary_sensors, sensor_name
 
     if sensor.nil?
-      say "I couldn't find a sensor named #{sensor_name}!"
+      say "Sorry, I couldn't find a sensor named #{sensor_name}!"
     else
       oid = sensor["oid"]
 
@@ -394,16 +567,27 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #System commands
 
-  listen_for /\bhelper reload\b/i do
-    say "Reloading configuration!"
-    reload_configuration
+  #System notices
+  listen_for /\bsystem notices\b/i do
+    notices = api "controller.notices()"
+    say "The current system notices are: #{notices.join(". ")}."
 
     request_completed
   end
 
-  listen_for /\bhelper status\b/i do
+  #System status
+  listen_for /\bsystem status\b/i do
     status = api "controller.statusDescription"
-    say "HaikuHelper control is available, remote helper status is: #{status}"
+    version = api "helper.version"
+    say "HaikuHelper control is available, remote helper version is: #{version}, status is: #{status}"
+
+    request_completed
+  end
+
+  #Helper reload
+  listen_for /\bhelper reload\b/i do
+    say "Reloading configuration!"
+    reload_configuration
 
     request_completed
   end

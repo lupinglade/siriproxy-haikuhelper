@@ -135,10 +135,15 @@ required
 Control commands:
 
 * {Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation} (the) {area_name}
+* {Lock|Unlock} all (the|of the) {locks|readers|access control readers}
 * {Lock|Unlock} (the) {reader_name}
-* {Audio|Music|Speakers} {on|off|mute|unmute} in (the) {audio_zone_name}
 * {Bypass|Restore} (the) {zone_name}
-* Macro {button_name}
+* {Macro|Button} {button_name}
+* All {music|audio|speakers|audio zones} {on|off|mute|unmute}
+* {Audio|Music|Speakers|Audio zone} {on|off|mute|unmute} in (the) {audio_zone_name}
+* Set the (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
+* Set the (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
+* Set the (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
 * (Turn) all lights {on|off}
 * {Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
 * Set (the) {light_name} (in (the) {room_name}) to {0-100} (percent)
@@ -146,14 +151,18 @@ Control commands:
 
 Query commands:
 
+* What is the energy cost?
+* What is the {area_name} area {status|mode}?
+* What is the {zone_name} zone status?
 * What is the outdoor temperature?
 * What is the outdoor humidity?
-* What is the {temperature|humidity|heat setpoint|cool setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
-* What is the {value|high setpoint|low setpoint|} for (the) {sensor_name}?
+* What is the {temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
+* What is the {value|high setpoint|low setpoint} for (the) {sensor_name}?
 
 System commands:
 
-* Helper status
+* System status
+* System notices
 * Helper reload
 
 The last one reloads the object names from the HaikuHelper API, which is useful if you've renamed some objects or added new ones.
