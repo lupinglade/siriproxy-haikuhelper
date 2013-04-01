@@ -250,7 +250,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = thermostat["oid"]
 
       units = (property == "heat setpoint" or property == "cool setpoint") ? "degrees" : "percent"
-      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value}? #{units}"
+      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value} #{units}?"
 
       if(response =~ CONFIRM_REGEX)
         case property.downcase
