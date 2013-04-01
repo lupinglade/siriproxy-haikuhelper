@@ -33,21 +33,26 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     @zones = api "controller.zones"
   end
 
-  #Finding methods
+  #Helper methods
 
   #Find an object by name inside objects
   def find_object_by_name(objects, name)
     objects.detect { |o| o["bestDescription"].casecmp(name) == 0 }
   end
 
- #Find a light unit by name
+  #Find a light unit by name
   def find_light_unit(name, room_name = nil)
     @units.detect { |l| l["bestDescription"].casecmp(name) == 0 && (room_name == nil || l["roomDescription"] =~ /#{Regexp.escape(room_name)}/i) }
   end
 
- #Find a room unit by name
+  #Find a room unit by name
   def find_room_unit(room_name)
     @units.detect { |l| l["isRoom"] && l["bestDescription"].casecmp(name) == 0 }
+  end
+
+  # Validate a security code
+  def validate_security_code(code, area_number = 0)
+    api "controller.validateCodeSynchronously('#{code}', #{area_number})"
   end
 
   #Control commands
@@ -61,7 +66,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Please say your security code to #{mode} #{area_name}:"
 
-      if(response.downcase != "cancel")
+      if(validate_security_code(response, area["number"]) > 0)
         oid = area["oid"]
 
         case mode.downcase
@@ -99,7 +104,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   listen_for /\b(unlock|lock)(?: the| of the)? (locks|readers|access control readers)\b/i do |action|
     response = ask "Please say your security code to #{action} all locks:"
 
-    if(response.downcase != "cancel")
+    if(validate_security_code(response) > 0)
       case action.downcase
         when "unlock"
           api "controller.lockAllLocks()"
@@ -124,7 +129,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Please say your security code to #{action} #{reader_name}:"
 
-      if(response.downcase != "cancel")
+      if(validate_security_code(response) > 0)
         oid = reader["oid"]
 
         case action.downcase
@@ -152,7 +157,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Please say your security code to #{action} #{zone_name}:"
 
-      if(response.downcase != "cancel")
+      if(validate_security_code(response) > 0)
         oid = zone["oid"]
 
         case action.downcase
