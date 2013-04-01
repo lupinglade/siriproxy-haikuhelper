@@ -174,6 +174,7 @@ Note 2: the vocabulary will be expanding and changing as the project matures.
 ## Links
 
 * https://github.com/plamoni/SiriProxy
+* http://cocoontech.com/forums/forum/67-haiku-haikuhelper/
 * http://www.haikuautomation.com/
 * http://www.nullriver.com/
 
