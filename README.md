@@ -145,7 +145,7 @@ Query commands:
 
 * What is the outdoor temperature?
 * What is the outdoor humidity?
-* What is the {temperature|humidity|heat setpoint|cool setpoint|mode|fan setting} in (the) {thermostat_name} ?
+* What is the {temperature|humidity|heat setpoint|cool setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
 
 System commands:
 
