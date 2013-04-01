@@ -1,5 +1,6 @@
 require "httparty"
 
+
 class HaikuHelperAPI
   include HTTParty
   format :json

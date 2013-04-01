@@ -129,16 +129,26 @@ Note: Further information on installing SiriProxy is available on the project's 
 
 Then, once you have it working, here are some of the commands, many can be prefixed/suffixed as you wish:
 
-* Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation (the) area_name
-* Lock|Unlock (the) reader_name
-* Audio on|off|mute|unmute in (the) audio_zone_name
-* Bypass|Restore (the) zone_name
-* Macro button_name
-* (Turn) all lights on|off
-* Turn on|off (the) light_name in (the) room_name
-* Turn on|off (the) light_name
+Control commands:
+
+* {Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation} (the) {area_name}
+* {Lock|Unlock} (the) {reader_name}
+* {Audio|Music|Speakers} {on|off|mute|unmute} in (the) {audio_zone_name}
+* {Bypass|Restore} (the) {zone_name}
+* Macro {button_name}
+* (Turn) all lights {on|off}
+* {Turn on|Turn off|Brighten|Dim} (the) {light_name} in (the) {room_name}
+* {Turn on|Turn off|Brighten|Dim} (the) {light_name}
+* Set scene {a|b|c|d} in (the) {room_name}
+
+Query commands:
+
 * What is the outdoor temperature?
 * What is the outdoor humidity?
+* What is the {temperature|humidity|heat setpoint|cool setpoint|mode|fan setting} in (the) {thermostat_name} ?
+
+System commands:
+
 * Helper status
 * Helper reload
 
