@@ -64,7 +64,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     if area.nil?
       say "Sorry, I couldn't find an area named #{area_name}!"
     else
-      response = ask "Please say your security code to #{mode} #{area_name}:"
+      response = ask "Please say your security code to #{mode} the #{area_name}:"
 
       if(validate_security_code(response, area["number"]) > 0)
         oid = area["oid"]
