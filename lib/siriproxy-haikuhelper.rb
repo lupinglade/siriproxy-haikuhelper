@@ -229,27 +229,23 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
-      if room_name.nil?
-        say "I couldn't find a unit named #{light_name}!"
-      else
-        say "I couldn't find a unit named #{light_name} in the #{room_name}!"
-      end
+      say "I couldn't find a unit named #{light_name} in the #{room_name}!"
     else
       oid = unit["oid"]
 
       case action.downcase
         when "turn on"
           api "helper.objectWithOID('#{oid}').on()"
-          say "Okay, unit #{light_name} turned on."
+          say "Okay, unit #{light_name} in the #{room_name} turned on."
         when "turn off"
           api "helper.objectWithOID('#{oid}').off()"
-          say "Okay, unit #{light_name} turned off."
+          say "Okay, unit #{light_name} the #{room_name} turned off."
         when "brighten"
-          api "helper.objectWithOID('#{oid}').brighten(3)"
-          say "Okay, unit #{light_name} brightened."
+          api "helper.objectWithOID('#{oid}').brighten(2)"
+          say "Okay, unit #{light_name} the #{room_name} brightened."
         when "dim"
-          api "helper.objectWithOID('#{oid}').dim(3)"
-          say "Okay, unit #{light_name} dimmed."
+          api "helper.objectWithOID('#{oid}').dim(2)"
+          say "Okay, unit #{light_name} the #{room_name} dimmed."
       end
     end
 
@@ -274,12 +270,46 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
           api "helper.objectWithOID('#{oid}').off()"
           say "Okay, unit #{light_name} turned off."
         when "brighten"
-          api "helper.objectWithOID('#{oid}').brighten(3)"
+          api "helper.objectWithOID('#{oid}').brighten(2)"
           say "Okay, unit #{light_name} brightened."
         when "dim"
-          api "helper.objectWithOID('#{oid}').dim(3)"
+          api "helper.objectWithOID('#{oid}').dim(2)"
           say "Okay, unit #{light_name} dimmed."
       end
+    end
+
+    request_completed
+  end
+
+  #Set (the) {light_name} in (the) {room_name} to {0-100} percent
+  listen_for /set(?: the)? (.*) in(?: the)? (.*) to (1?[0-9][0-9]?)/i do |light_name, room_name, percent|
+    room_name.strip!
+    unit = find_light_unit light_name, room_name
+  
+    if unit.nil?
+        say "I couldn't find a unit named #{light_name} in the #{room_name}!"
+    else
+      oid = unit["oid"]
+
+      api "helper.objectWithOID('#{oid}').setLevel(#{percent.to_i})"
+      say "Okay, unit #{light_name} in the #{room_name} has been set to #{percent}%."
+    end
+
+    request_completed
+  end
+
+  #Set (the) {light_name} to {0-100} percent
+  listen_for /set(?: the)? (.*) to (1?[0-9][0-9]?)\%/i do |light_name,percent|
+    light_name.strip!
+    unit = find_light_unit light_name
+  
+    if unit.nil?
+      say "I couldn't find a unit named #{light_name}!"
+    else
+      oid = unit["oid"]
+
+      api "helper.objectWithOID('#{oid}').setLevel(#{percent.to_i})"
+      say "Okay, unit #{light_name} has been set to #{percent}%."
     end
 
     request_completed

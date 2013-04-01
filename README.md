@@ -137,6 +137,8 @@ Control commands:
 * (Turn) all lights {on|off}
 * {Turn on|Turn off|Brighten|Dim} (the) {light_name} in (the) {room_name}
 * {Turn on|Turn off|Brighten|Dim} (the) {light_name}
+* Set (the) {light_name} in (the) {room_name} to {0-100} percent
+* Set (the) {light_name} to {0-100} percent
 * Set scene {a|b|c|d} in (the) {room_name}
 
 Query commands:
