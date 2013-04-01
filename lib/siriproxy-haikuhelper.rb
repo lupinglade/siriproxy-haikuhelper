@@ -197,8 +197,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #All {music|audio|speakers|audio zones} {on|off|mute|unmute}
-  listen_for /\ball (?:music|audio|speakers|audio zones) (on|off|mute|unmute)\b/i do |action|
+  #All {audio|audio zones} {on|off|mute|unmute}
+  listen_for /\ball (?:audio|audio zones) (on|off|mute|unmute)\b/i do |action|
     case action
       when "on"
         api "controller.sendAllAudioZonesOnCommand()"
@@ -217,8 +217,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #{Audio|Music|Speakers|Audio zone} {on|off|mute|unmute} in (the) {audio_zone_name}
-  listen_for /\b(?:audio|music|speakers|audio zone) (on|off|mute|unmute) in(?: the)? (.*)\b/i do |action,audio_zone_name|
+  #Audio {on|off|mute|unmute} in (the) {audio_zone_name}
+  listen_for /\baudio (on|off|mute|unmute) in(?: the)? (.*)\b/i do |action,audio_zone_name|
     audio_zone = find_object_by_name @audio_zones, audio_zone_name
   
     if audio_zone.nil?

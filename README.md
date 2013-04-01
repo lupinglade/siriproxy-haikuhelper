@@ -139,8 +139,8 @@ Control commands:
 * {Lock|Unlock} (the) {reader_name}
 * {Bypass|Restore} (the) {zone_name}
 * {Macro|Button} {button_name}
-* All {music|audio|speakers|audio zones} {on|off|mute|unmute}
-* {Audio|Music|Speakers|Audio zone} {on|off|mute|unmute} in (the) {audio_zone_name}
+* All {audio|audio zones} {on|off|mute|unmute}
+* Audio {on|off|mute|unmute} in (the) {audio_zone_name}
 * Set the (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
 * Set the (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
 * Set the (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
