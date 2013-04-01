@@ -14,12 +14,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     end
   end
 
-  #Workaround trailing space bug in SiriProxy
-  def process(text)
-    puts "stripping"
-    super text.strip
-  end
-
   #HH API shorthand
   def api(cmd)
     @helper.api cmd
