@@ -377,8 +377,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #What is the {value|high setpoint|low setpoint|} for (the) {sensor_name} sensor?
-  listen_for /what is the (value|high setpoint|low setpoint) for(?: the)? (.*) sensor/i do |property,sensor_name|
+  #What is the {value|high setpoint|low setpoint|} for (the) {sensor_name}?
+  listen_for /what is the (value|high setpoint|low setpoint) for(?: the)? (.*)/i do |property,sensor_name|
     sensor_name.strip!
     sensor = find_object_by_name @auxiliary_sensors, sensor_name
 
