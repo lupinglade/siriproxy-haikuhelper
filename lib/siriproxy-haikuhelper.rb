@@ -14,6 +14,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     end
   end
 
+  #Workaround trailing space bug in SiriProxy
+  def process(text)
+    puts "stripping"
+    super text.strip
+  end
+
   #HH API shorthand
   def api(cmd)
     @helper.api cmd
@@ -98,7 +104,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #{Lock|Unlock} (the) {reader_name}
   listen_for /\b(unlock|lock)(?: the)? (.*)\b/i do |action,reader_name|
-    reader_name.strip!
     reader = find_object_by_name @readers, reader_name
   
     if reader.nil?
@@ -127,7 +132,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #{Audio|Music|Speakers} {on|off|mute|unmute} in (the) {audio_zone_name}
   listen_for /\b(?:audio|music|speakers) (on|off|mute|unmute) in(?: the)? (.*)\b/i do |action,audio_zone_name|
-    audio_zone_name.strip!
     audio_zone = find_object_by_name @audio_zones, audio_zone_name
   
     if audio_zone.nil?
@@ -156,7 +160,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #{Bypass|Restore} (the) {zone_name}
   listen_for /\b(bypass|restore)(?: the)? (.*)\b/i do |action,zone_name|
-    zone_name.strip!
     zone = find_object_by_name @zones, zone_name
   
     if zone.nil?
@@ -185,7 +188,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #Macro {button_name}
   listen_for /\bmacro (.*)\b/i do |button_name|
-    button_name.strip!
     button = find_object_by_name @buttons, button_name
   
     if button.nil?
@@ -224,7 +226,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #{Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
-  listen_for /\b(turn on|turn off|brighten|dim)(?: the )?(.*?)(?: in (?:the )?(.*?))? ?$/i do |action, light_name, room_name|
+  listen_for /\b(turn on|turn off|brighten|dim)(?: the )?(.*?)(?: in (?:the )?(.*?))?$/i do |action, light_name, room_name|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -256,7 +258,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #Set (the) {light_name} (in (the) {room_name}) to {0-100}
-  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?) ?$/i do |light_name, room_name, percent|
+  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)$/i do |light_name, room_name, percent|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -277,7 +279,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #Set scene {a|b|c|d} in (the) {room_name}
   listen_for /\bscene (a|b|c|d) in(?: the)? (.*)/i do |scene, room_name|
-    room_name.strip!
     unit = find_room_unit room_name
   
     if unit.nil?
@@ -334,7 +335,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #What is the {temperature|humidity|heat setpoint|cool setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
   listen_for /\bwhat is the (temperature|humidity|heat setpoint|cool setpoint|mode|fan setting) (in|on|at|for)(?: the)? (.*)\b/i do |property,prep,thermostat_name|
-    thermostat_name.strip!
     thermostat = find_object_by_name @thermostats, thermostat_name
 
     if thermostat.nil?
@@ -369,7 +369,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #What is the {value|high setpoint|low setpoint|} for (the) {sensor_name}?
   listen_for /\bwhat is the (value|high setpoint|low setpoint) for(?: the)? (.*)\b/i do |property,sensor_name|
-    sensor_name.strip!
     sensor = find_object_by_name @auxiliary_sensors, sensor_name
 
     if sensor.nil?

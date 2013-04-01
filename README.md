@@ -46,7 +46,6 @@ These commands are to be run on the machine that will be running HaikuHelper/Sir
 
 ```
 rvm install 2.0.0-p0 --autolibs=3
-
 ```
 
 * Now install the siriproxy gem:
