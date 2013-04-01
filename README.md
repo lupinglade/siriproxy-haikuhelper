@@ -125,7 +125,13 @@ Note: Further information on installing SiriProxy is available on the project's 
 
 ## Vocabulary
 
-Then, once you have it working, here are some of the commands, many can be prefixed/suffixed as you wish:
+Then, once you have it working, here are some of the commands, many can be prefixed/suffixed as you wish. The format of this section is:
+
+```
+required
+{choose|one|of}
+(optional)
+```
 
 Control commands:
 
@@ -135,10 +141,8 @@ Control commands:
 * {Bypass|Restore} (the) {zone_name}
 * Macro {button_name}
 * (Turn) all lights {on|off}
-* {Turn on|Turn off|Brighten|Dim} (the) {light_name} in (the) {room_name}
-* {Turn on|Turn off|Brighten|Dim} (the) {light_name}
-* Set (the) {light_name} in (the) {room_name} to {0-100} percent
-* Set (the) {light_name} to {0-100} percent
+* {Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
+* Set (the) {light_name} (in (the) {room_name}) to {0-100} (percent)
 * Set scene {a|b|c|d} in (the) {room_name}
 
 Query commands:
