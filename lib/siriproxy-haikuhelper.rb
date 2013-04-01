@@ -178,7 +178,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     if button.nil?
       say "Sorry, I couldn't find a button named #{button_name}!"
     else
-      response = ask "Are you sure you want to activate button #{button_name}?"
+      response = ask "Are you sure you wish to activate button #{button_name}?"
 
       if(response =~ CONFIRM_REGEX)
         oid = button["oid"]
@@ -249,22 +249,23 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       oid = thermostat["oid"]
 
-      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value}?"
+      units = (property == "heat setpoint" or property == "cool setpoint") ? "degrees" : "percent"
+      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value}? #{units}"
 
       if(response =~ CONFIRM_REGEX)
         case property.downcase
           when "heat setpoint"
             api "helper.objectWithOID('#{oid}').setHeatSetpoint(#{value.to_f})"
-            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+            say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
           when "cool setpoint"
             api "helper.objectWithOID('#{oid}').setCoolSetpoint(#{value.to_f})"
-            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+            say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
           when "humidify setpoint"
             api "helper.objectWithOID('#{oid}').setHumidifySetpoint(#{value.to_i})"
-            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+            say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
           when "dehumidify setpoint"
             api "helper.objectWithOID('#{oid}').setDehumidifySetpoint(#{value.to_i})"
-            say "Okay, setting the #{thermostat_name} #{property_name} to #{value}."
+            say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
         end
       else
         say "Okay, I'll leave it as is."
@@ -308,16 +309,17 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       oid = sensor["oid"]
 
-      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value}?"
+      units = (sensor["kind"] != 84) ? "degrees" : "percent"
+      response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value} #{units}?"
 
       if(response =~ CONFIRM_REGEX)
         case property.downcase
           when "high setpoint"
             api "helper.objectWithOID('#{oid}').setHighSetpoint(#{value.to_f})"
-            say "Okay, setting the #{sensor_name} #{property} to #{value}."
+            say "Okay, setting the #{sensor_name} #{property} to #{value} #{units}."
           when "low setpoint"
             api "helper.objectWithOID('#{oid}').setLowSetpoint(#{value.to_f})"
-            say "Okay, setting the #{sensor_name} #{property} to #{value}."
+            say "Okay, setting the #{sensor_name} #{property} to #{value} #{units}."
         end
       else
         say "Okay, I'll leave it as is."
