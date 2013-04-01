@@ -382,8 +382,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     sensor_name.strip!
     sensor = find_object_by_name @auxiliary_sensors, sensor_name
 
-    temp = api "controller.outdoorHumiditySensor.valueDescription"
-
     if sensor.nil?
       say "I couldn't find a sensor named #{sensor_name}!"
     else
