@@ -26,6 +26,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     @readers = api "controller.accessControlReaders"
     @areas = api "controller.areas"
     @audio_zones = api "controller.audioZones"
+    @auxiliary_sensors = api "controller.auxiliarySensors"
     @buttons = api "controller.buttons"
     @thermostats = api "controller.thermostats"
     @units = api "controller.units"
@@ -346,8 +347,6 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     thermostat_name.strip!
     thermostat = find_object_by_name @thermostats, thermostat_name
 
-    temp = api "controller.outdoorHumiditySensor.valueDescription"
-
     if thermostat.nil?
       say "I couldn't find a thermostat named #{thermostat_name}!"
     else
@@ -356,22 +355,50 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       case property.downcase
         when "temperature"
           value = api "helper.objectWithOID('#{oid}').temperatureDescription"
-          say "The #{property.downcase} #{prep} the #{thermostat_name} is #{value}."
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
         when "humidity"
           value = api "helper.objectWithOID('#{oid}').humidityDescription"
-          say "The #{property.downcase} #{prep} the #{thermostat_name} is #{value}."
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
         when "heat setpoint"
           value = api "helper.objectWithOID('#{oid}').heatSetpointDescription"
-          say "The #{property.downcase} #{prep} the #{thermostat_name} is #{value}."
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
         when "cool setpoint"
           value = api "helper.objectWithOID('#{oid}').coolSetpointDescription"
-          say "The #{property.downcase} #{prep} the #{thermostat_name} is #{value}."
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
         when "mode"
           value = api "helper.objectWithOID('#{oid}').modeDescription"
-          say "The #{property.downcase} #{prep} the #{thermostat_name} is #{value}."
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
         when "fan setting"
           value = api "helper.objectWithOID('#{oid}').fanDescription"
-          say "The #{property.downcase} #{prep} the #{thermostat_name} is #{value}."
+          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      end
+    end
+
+    request_completed
+  end
+
+  #What is the {value|high setpoint|low setpoint|} for (the) {sensor_name} sensor?
+  listen_for /what is the (value|high setpoint|low setpoint) for(?: the)? (.*) sensor/i do |property,sensor_name|
+    sensor_name.strip!
+    sensor = find_object_by_name @auxiliary_sensors, sensor_name
+
+    temp = api "controller.outdoorHumiditySensor.valueDescription"
+
+    if sensor.nil?
+      say "I couldn't find a sensor named #{sensor_name}!"
+    else
+      oid = sensor["oid"]
+
+      case property.downcase
+        when "value"
+          value = api "helper.objectWithOID('#{oid}').valueDescription"
+          say "The #{property} for the #{sensor_name} sensor is #{value}."
+        when "high setpoint"
+          value = api "helper.objectWithOID('#{oid}').highSetpointDescription"
+          say "The #{property} for the #{sensor_name} sensor is #{value}."
+        when "low setpoint"
+          value = api "helper.objectWithOID('#{oid}').lowSetpointDescription"
+          say "The #{property} for the #{sensor_name} sensor is #{value}."
       end
     end
 
