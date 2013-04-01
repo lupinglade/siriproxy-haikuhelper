@@ -15,7 +15,6 @@ Add this configuration entry to your ~/.siriproxy/config.yml:
 ```
     - name: 'HaikuHelper'
       git: 'git://github.com/lupinglade/siriproxy-haikuhelper.git'
-      #path: './plugins/siriproxy-haikuhelper'
       url: 'http://localhost:9399'
       controller_name: 'My Home'
       password: 'secret'
@@ -73,7 +72,6 @@ cp ~/.rvm/gems/ruby-2.0.0-p0/gems/siriproxy-0.5.2/config.example.yml ~/.siriprox
 ```
     - name: 'HaikuHelper'
       git: 'git://github.com/lupinglade/siriproxy-haikuhelper.git'
-      #path: './plugins/siriproxy-haikuhelper'
       url: 'http://localhost:9399'
       controller_name: 'My Home'
       password: 'secret'
