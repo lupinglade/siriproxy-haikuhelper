@@ -70,27 +70,27 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         oid = area["oid"]
 
         case mode.downcase
-          when "disarm"
-            api "helper.objectWithOID('#{oid}').setMode(0)"
-            say "Okay, the #{area_name} has been disarmed!"
-          when "arm day"
-            api "helper.objectWithOID('#{oid}').setMode(1)"
-            say "Arming the #{area_name} in mode day..."
-          when "arm night"
-            api "helper.objectWithOID('#{oid}').setMode(2)"
-            say "Arming the #{area_name} in mode night..."
-          when "arm away"
-            api "helper.objectWithOID('#{oid}').setMode(3)"
-            say "Arming the #{area_name} in mode away..."
-          when "arm vacation"
-            api "helper.objectWithOID('#{oid}').setMode(4)"
-            say "Arming the #{area_name} in mode vacation..."
-          when "arm day instant"
-            api "helper.objectWithOID('#{oid}').setMode(5)"
-            say "Arming the #{area_name} in mode day instant..."
-          when "arm night delayed"
-            api "helper.objectWithOID('#{oid}').setMode(6)"
-            say "Arming the #{area_name} in mode night delayed..."
+        when "disarm"
+          api "helper.objectWithOID('#{oid}').setMode(0)"
+          say "Okay, the #{area_name} has been disarmed!"
+        when "arm day"
+          api "helper.objectWithOID('#{oid}').setMode(1)"
+          say "Arming the #{area_name} in mode day..."
+        when "arm night"
+          api "helper.objectWithOID('#{oid}').setMode(2)"
+          say "Arming the #{area_name} in mode night..."
+        when "arm away"
+          api "helper.objectWithOID('#{oid}').setMode(3)"
+          say "Arming the #{area_name} in mode away..."
+        when "arm vacation"
+          api "helper.objectWithOID('#{oid}').setMode(4)"
+          say "Arming the #{area_name} in mode vacation..."
+        when "arm day instant"
+          api "helper.objectWithOID('#{oid}').setMode(5)"
+          say "Arming the #{area_name} in mode day instant..."
+        when "arm night delayed"
+          api "helper.objectWithOID('#{oid}').setMode(6)"
+          say "Arming the #{area_name} in mode night delayed..."
         end
       else
         say "Sorry, your security code could not be validated."
@@ -106,12 +106,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
     if(validate_security_code(response) > 0)
       case action.downcase
-        when "unlock"
-          api "controller.lockAllLocks()"
-          say "Okay, all locks have been locked"
-        when "lock"
-          api "controller.unlockAllLocks()"
-          say "Okay, all locks have been unlocked"
+      when "unlock"
+        api "controller.lockAllLocks()"
+        say "Okay, all locks have been locked"
+      when "lock"
+        api "controller.unlockAllLocks()"
+        say "Okay, all locks have been unlocked"
       end
     else
       say "Sorry, your security code could not be validated."
@@ -133,12 +133,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         oid = reader["oid"]
 
         case action.downcase
-          when "unlock"
-            api "helper.objectWithOID('#{oid}').unlock()"
-            say "Okay, #{reader_name} has been unlocked."
-          when "lock"
-            api "helper.objectWithOID('#{oid}').lock()"
-            say "Okay, #{reader_name} has been lock."
+        when "unlock"
+          api "helper.objectWithOID('#{oid}').unlock()"
+          say "Okay, #{reader_name} has been unlocked."
+        when "lock"
+          api "helper.objectWithOID('#{oid}').lock()"
+          say "Okay, #{reader_name} has been lock."
         end
       else
         say "Sorry, your security code could not be validated."
@@ -161,12 +161,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         oid = zone["oid"]
 
         case action.downcase
-          when "bypass"
-            api "helper.objectWithOID('#{oid}').bypass()"
-            say "Okay, #{zone_name} has been bypassed."
-          when "restore"
-            api "helper.objectWithOID('#{oid}').restore()"
-            say "Okay, #{zone_name} has been restored."
+        when "bypass"
+          api "helper.objectWithOID('#{oid}').bypass()"
+          say "Okay, #{zone_name} has been bypassed."
+        when "restore"
+          api "helper.objectWithOID('#{oid}').restore()"
+          say "Okay, #{zone_name} has been restored."
         end
       else
         say "Sorry, your security code could not be validated."
@@ -200,18 +200,18 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   #All {audio|audio zones} {on|off|mute|unmute}
   listen_for /\ball (?:audio|audio zones) (on|off|mute|unmute)\b/i do |action|
     case action
-      when "on"
-        api "controller.sendAllAudioZonesOnCommand()"
-        say "Okay, all audio zones have been turned on."
-      when "off"
-        api "controller.sendAllAudioZonesOffCommand()"
-        say "Okay, all audio zones have been turned off."
-      when "mute"
-        api "controller.sendAllAudioZonesMuteCommand()"
-        say "Okay, all audio zones have been muted."
-      when "unmute"
-        api "controller.sendAllAudioZonesUnmuteCommand()"
-        say "Okay, all audio zones have been unmuted."
+    when "on"
+      api "controller.sendAllAudioZonesOnCommand()"
+      say "Okay, all audio zones have been turned on."
+    when "off"
+      api "controller.sendAllAudioZonesOffCommand()"
+      say "Okay, all audio zones have been turned off."
+    when "mute"
+      api "controller.sendAllAudioZonesMuteCommand()"
+      say "Okay, all audio zones have been muted."
+    when "unmute"
+      api "controller.sendAllAudioZonesUnmuteCommand()"
+      say "Okay, all audio zones have been unmuted."
     end
 
     request_completed
@@ -227,18 +227,18 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = audio_zone["oid"]
 
       case action.downcase
-        when "on"
-          api "helper.objectWithOID('#{oid}').on()"
-          say "Okay, #{audio_zone_name} audio has been turned on."
-        when "off"
-          api "helper.objectWithOID('#{oid}').off()"
-          say "Okay, #{audio_zone_name} audio has been turned off."
-        when "mute"
-          api "helper.objectWithOID('#{oid}').mute()"
-          say "Okay, #{audio_zone_name} audio has been muted."
-        when "unmute"
-          api "helper.objectWithOID('#{oid}').unmute()"
-          say "Okay, #{audio_zone_name} audio has been unmuted."
+      when "on"
+        api "helper.objectWithOID('#{oid}').on()"
+        say "Okay, #{audio_zone_name} audio has been turned on."
+      when "off"
+        api "helper.objectWithOID('#{oid}').off()"
+        say "Okay, #{audio_zone_name} audio has been turned off."
+      when "mute"
+        api "helper.objectWithOID('#{oid}').mute()"
+        say "Okay, #{audio_zone_name} audio has been muted."
+      when "unmute"
+        api "helper.objectWithOID('#{oid}').unmute()"
+        say "Okay, #{audio_zone_name} audio has been unmuted."
       end
     end
 
@@ -259,18 +259,18 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
       if(response =~ CONFIRM_REGEX)
         case property.downcase
-          when "heat setpoint"
-            api "helper.objectWithOID('#{oid}').setHeatSetpoint(#{value.to_f})"
-            say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
-          when "cool setpoint"
-            api "helper.objectWithOID('#{oid}').setCoolSetpoint(#{value.to_f})"
-            say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
-          when "humidify setpoint"
-            api "helper.objectWithOID('#{oid}').setHumidifySetpoint(#{value.to_i})"
-            say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
-          when "dehumidify setpoint"
-            api "helper.objectWithOID('#{oid}').setDehumidifySetpoint(#{value.to_i})"
-            say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
+        when "heat setpoint"
+          api "helper.objectWithOID('#{oid}').setHeatSetpoint(#{value.to_f})"
+          say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
+        when "cool setpoint"
+          api "helper.objectWithOID('#{oid}').setCoolSetpoint(#{value.to_f})"
+          say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
+        when "humidify setpoint"
+          api "helper.objectWithOID('#{oid}').setHumidifySetpoint(#{value.to_i})"
+          say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
+        when "dehumidify setpoint"
+          api "helper.objectWithOID('#{oid}').setDehumidifySetpoint(#{value.to_i})"
+          say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
         end
       else
         say "Okay, I'll leave it as is."
@@ -290,15 +290,15 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = thermostat["oid"]
 
       case value.downcase
-        when "automatic", "auto"
-          api "helper.objectWithOID('#{oid}').setFan(0)"
-          say "Okay, setting the #{thermostat_name} fan setting to #{value}."
-        when "always on", "on"
-          api "helper.objectWithOID('#{oid}').setFan(1)"
-          say "Okay, setting the #{thermostat_name} fan setting to #{value}."
-        when "cycle"
-          api "helper.objectWithOID('#{oid}').setFan(2)"
-          say "Okay, setting the #{thermostat_name} fan setting to #{value}."
+      when "automatic", "auto"
+        api "helper.objectWithOID('#{oid}').setFan(0)"
+        say "Okay, setting the #{thermostat_name} fan setting to #{value}."
+      when "always on", "on"
+        api "helper.objectWithOID('#{oid}').setFan(1)"
+        say "Okay, setting the #{thermostat_name} fan setting to #{value}."
+      when "cycle"
+        api "helper.objectWithOID('#{oid}').setFan(2)"
+        say "Okay, setting the #{thermostat_name} fan setting to #{value}."
       end
     end
 
@@ -319,12 +319,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
       if(response =~ CONFIRM_REGEX)
         case property.downcase
-          when "high setpoint"
-            api "helper.objectWithOID('#{oid}').setHighSetpoint(#{value.to_f})"
-            say "Okay, setting the #{sensor_name} #{property} to #{value} #{units}."
-          when "low setpoint"
-            api "helper.objectWithOID('#{oid}').setLowSetpoint(#{value.to_f})"
-            say "Okay, setting the #{sensor_name} #{property} to #{value} #{units}."
+        when "high setpoint"
+          api "helper.objectWithOID('#{oid}').setHighSetpoint(#{value.to_f})"
+          say "Okay, setting the #{sensor_name} #{property} to #{value} #{units}."
+        when "low setpoint"
+          api "helper.objectWithOID('#{oid}').setLowSetpoint(#{value.to_f})"
+          say "Okay, setting the #{sensor_name} #{property} to #{value} #{units}."
         end
       else
         say "Okay, I'll leave it as is."
@@ -366,18 +366,18 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = unit["oid"]
 
       case action.downcase
-        when "turn on"
-          api "helper.objectWithOID('#{oid}').on()"
-          say "Okay, unit #{light_name} turned on."
-        when "turn off"
-          api "helper.objectWithOID('#{oid}').off()"
-          say "Okay, unit #{light_name} turned off."
-        when "brighten"
-          api "helper.objectWithOID('#{oid}').brighten(2)"
-          say "Okay, unit #{light_name} brightened."
-        when "dim"
-          api "helper.objectWithOID('#{oid}').dim(2)"
-          say "Okay, unit #{light_name} dimmed."
+      when "turn on"
+        api "helper.objectWithOID('#{oid}').on()"
+        say "Okay, unit #{light_name} turned on."
+      when "turn off"
+        api "helper.objectWithOID('#{oid}').off()"
+        say "Okay, unit #{light_name} turned off."
+      when "brighten"
+        api "helper.objectWithOID('#{oid}').brighten(2)"
+        say "Okay, unit #{light_name} brightened."
+      when "dim"
+        api "helper.objectWithOID('#{oid}').dim(2)"
+        say "Okay, unit #{light_name} dimmed."
       end
     end
 
@@ -414,18 +414,18 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = unit["oid"]
 
       case scene.downcase
-        when "a"
-          api "helper.objectWithOID('#{oid}').setScene(1)"
-          say "Setting scene A in the #{room_name}"
-        when "b"
-          api "helper.objectWithOID('#{oid}').setScene(2)"
-          say "Setting scene B in the #{room_name}"
-        when "c"
-          api "helper.objectWithOID('#{oid}').setScene(3)"
-          say "Setting scene C in the #{room_name}"
-        when "d"
-          api "helper.objectWithOID('#{oid}').setScene(4)"
-          say "Setting scene D in the #{room_name}"
+      when "a"
+        api "helper.objectWithOID('#{oid}').setScene(1)"
+        say "Setting scene A in the #{room_name}"
+      when "b"
+        api "helper.objectWithOID('#{oid}').setScene(2)"
+        say "Setting scene B in the #{room_name}"
+      when "c"
+        api "helper.objectWithOID('#{oid}').setScene(3)"
+        say "Setting scene C in the #{room_name}"
+      when "d"
+        api "helper.objectWithOID('#{oid}').setScene(4)"
+        say "Setting scene D in the #{room_name}"
       end
     end
 
@@ -511,30 +511,30 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = thermostat["oid"]
 
       case property.downcase
-        when "temperature"
-          value = api "helper.objectWithOID('#{oid}').temperatureDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "humidity"
-          value = api "helper.objectWithOID('#{oid}').humidityDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "heat setpoint"
-          value = api "helper.objectWithOID('#{oid}').heatSetpointDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "cool setpoint"
-          value = api "helper.objectWithOID('#{oid}').coolSetpointDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "humidify setpoint"
-          value = api "helper.objectWithOID('#{oid}').humidifySetpointDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "dehumidify setpoint"
-          value = api "helper.objectWithOID('#{oid}').dehumidifySetpointDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "mode"
-          value = api "helper.objectWithOID('#{oid}').modeDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
-        when "fan setting"
-          value = api "helper.objectWithOID('#{oid}').fanDescription"
-          say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "temperature"
+        value = api "helper.objectWithOID('#{oid}').temperatureDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "humidity"
+        value = api "helper.objectWithOID('#{oid}').humidityDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "heat setpoint"
+        value = api "helper.objectWithOID('#{oid}').heatSetpointDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "cool setpoint"
+        value = api "helper.objectWithOID('#{oid}').coolSetpointDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "humidify setpoint"
+        value = api "helper.objectWithOID('#{oid}').humidifySetpointDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "dehumidify setpoint"
+        value = api "helper.objectWithOID('#{oid}').dehumidifySetpointDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "mode"
+        value = api "helper.objectWithOID('#{oid}').modeDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
+      when "fan setting"
+        value = api "helper.objectWithOID('#{oid}').fanDescription"
+        say "The #{property} #{prep} the #{thermostat_name} is #{value}."
       end
     end
 
@@ -551,15 +551,15 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = sensor["oid"]
 
       case property.downcase
-        when "value"
-          value = api "helper.objectWithOID('#{oid}').valueDescription"
-          say "The #{property} for the #{sensor_name} sensor is #{value}."
-        when "high setpoint"
-          value = api "helper.objectWithOID('#{oid}').highSetpointDescription"
-          say "The #{property} for the #{sensor_name} sensor is #{value}."
-        when "low setpoint"
-          value = api "helper.objectWithOID('#{oid}').lowSetpointDescription"
-          say "The #{property} for the #{sensor_name} sensor is #{value}."
+      when "value"
+        value = api "helper.objectWithOID('#{oid}').valueDescription"
+        say "The #{property} for the #{sensor_name} sensor is #{value}."
+      when "high setpoint"
+        value = api "helper.objectWithOID('#{oid}').highSetpointDescription"
+        say "The #{property} for the #{sensor_name} sensor is #{value}."
+      when "low setpoint"
+        value = api "helper.objectWithOID('#{oid}').lowSetpointDescription"
+        say "The #{property} for the #{sensor_name} sensor is #{value}."
       end
     end
 
