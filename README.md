@@ -28,11 +28,11 @@ Then run siriproxy bundle (this will load the plugin from this git repository an
 
 Here are the basic steps needed to get voice control of your HAI controller via HaikuHelper and SiriProxy:
 
+These steps/commands are to be run on the machine that will be running HaikuHelper/SiriProxy (ie. your HaikuHelper server) under an admin user (not root).
+
 * Install Apple Xcode from the Mac App Store (free download).
 
 * Launch Xcode and go to the Preferences window, click "Downloads" and install the Command Line Tools package.
-
-These commands are to be run on the machine that will be running HaikuHelper/SiriProxy (ie. your HaikuHelper server).
 
 * Open up a Terminal window and install RVM (the Ruby Version Manager):
 
@@ -42,7 +42,7 @@ These commands are to be run on the machine that will be running HaikuHelper/Sir
 
 * Close and re-open the Terminal window to reload the RVM environment.
 
-* Run the following command to install Ruby 2.0.0-p0 using RVM.
+* Run the following command to install Ruby 2.0.0-p0 using RVM:
 
 ```
 rvm install 2.0.0-p0 --autolibs=3
@@ -63,7 +63,7 @@ mkdir ~/.siriproxy
 * Copy over the example configuration file to your siriproxy configuration directory:
 
 ```
-cp ~/.rvm/gems/ruby-2.0.0-p0/gems/siriproxy-0.5.2/config.example.yml ~/.siriproxy/config.yml
+cp ~/.rvm/gems/ruby-2.0.0-p0/gems/siriproxy-0.5.3/config.example.yml ~/.siriproxy/config.yml
 ```
 
 * Edit the ~/.siriproxy/config.yml file using a text/code editor and add this entry to the plugin section with the proper values:
@@ -136,8 +136,8 @@ Control commands:
 
 * Disarm (all areas)
 * Disarm (the) {area_name}
-* Arm (all areas) (in) {day instant|night delayed|day|night|away|vacation} (mode)
-* Arm (the) {area_name} (in) {day instant|night delayed|day|night|away|vacation} (mode)
+* Arm (all areas) (in) {day|night|away|vacation|day instant|night delayed} (mode)
+* Arm (the) {area_name} (in) {day|night|away|vacation|day instant|night delayed} (mode)
 * {Lock|Unlock} all (the|of the) {locks|readers|access control readers}
 * {Lock|Unlock} (the) {reader_name}
 * {Bypass|Restore} (the) {zone_name}
