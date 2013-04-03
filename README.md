@@ -134,11 +134,14 @@ required
 
 Control commands:
 
-* {Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation} (the) {area_name}
+* Disarm (all areas)
+* Disarm (the) {area_name}
+* Arm (all areas) (in) {day instant|night delayed|day|night|away|vacation} (mode)
+* Arm (the) {area_name} (in) {day instant|night delayed|day|night|away|vacation} (mode)
 * {Lock|Unlock} all (the|of the) {locks|readers|access control readers}
 * {Lock|Unlock} (the) {reader_name}
 * {Bypass|Restore} (the) {zone_name}
-* {Macro|Button} {button_name}
+* (Run) {macro|button} {button_name}
 * All {audio|audio zones} {on|off|mute|unmute}
 * Audio {on|off|mute|unmute} in (the) {audio_zone_name}
 * Set the (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)

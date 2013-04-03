@@ -7,7 +7,7 @@ require 'haikuhelper'
 class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   def initialize(config)
     if config["url"].nil?
-      puts "siriproxy-haikuhelper: Missing configuration, please define url, controller_name and password in your config.yml file." 
+      puts "[Error - HaikuHelper] Missing configuration, please define url, controller_name and password in your config.yml file." 
     else
       @helper = HaikuHelperAPI.new config["url"], config["controller_name"], config["password"]
       reload_configuration
@@ -19,9 +19,13 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     @helper.api cmd
   end
 
-  #Reloads configuration from HH server
+  #Reloads configuration from the HaikuHelper server
   def reload_configuration
-    puts "Reloading controller configuration..."
+    puts "[Info - HaikuHelper] Reloading HaikuHelper configuration..."
+
+    if api("helper.version").to_f < 2.90
+      puts "[Error - HaikuHelper] HaikuHelper 2.90 or later is required for siriproxy-haikuhelper to work!"
+    end
 
     @readers = api "controller.accessControlReaders"
     @areas = api "controller.areas"
@@ -57,12 +61,71 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #Control commands
 
-  #{Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation} (the) {area_name}
-  listen_for /\b(disarm|arm day instant|arm night delayed|arm day|arm night|arm away|arm vacation)(?: the)? (.*)\b/i do |mode,area_name|
-    if @areas.count == 1
-      area_name = @areas.first["bestDescription"]
+  #Disarm (all areas)
+  listen_for /\bdisarm(?: all areas)?$/i do
+    response = ask "Please say your security code to disarm all areas:"
+
+    if(validate_security_code(response, area["number"]) > 0)
+      api "controller.setAllAreasToMode(0)"
+      say "Okay, all areas disarmed!"
+    else
+      say "Sorry, your security code could not be validated."
     end
 
+    request_completed
+  end
+
+  #Disarm (the) {area_name}
+  listen_for /\bdisarm(?: the)? (.*)/i do |area_name|
+    area = find_object_by_name @areas, area_name
+
+    if area.nil?
+      say "Sorry, I couldn't find an area named #{area_name}!"
+    else
+      response = ask "Please say your security code to disarm all areas:"
+
+      if(validate_security_code(response, area["number"]) > 0)
+        oid = area["oid"]
+
+        api "helper.objectWithOID('#{oid}').setMode(0)"
+        say "Okay, the {area_name} area has been disarmed!"
+      else
+        say "Sorry, your security code could not be validated."
+      end
+    end
+
+    request_completed
+  end
+
+  #Arm (all areas) (in) {day instant|night delayed|day|night|away|vacation} (mode)
+  listen_for /\barm(?: all areas)?(?: in)? (day|night|away|vacation|day instant|night delayed)(?: mode)?\b/i do |mode|
+    response = ask "Please say your security code to #{mode} all areas:"
+
+    if(validate_security_code(response, area["number"]) > 0)
+      case mode.downcase
+      when "day"
+        api "controller.setAllAreasToMode(1)"
+      when "night"
+        api "controller.setAllAreasToMode(2)"
+      when "away"
+        api "controller.setAllAreasToMode(3)"
+      when "vacation"
+        api "controller.setAllAreasToMode(4)"
+      when "day instant"
+        api "controller.setAllAreasToMode(5)"
+      when "night delayed"
+        api "controller.setAllAreasToMode(6)"
+      end
+      say "Okay, arming all areas in #{mode} mode..."
+    else
+      say "Sorry, your security code could not be validated."
+    end
+
+    request_completed    
+  end
+
+  #Arm (the) {area_name} (in) {day instant|night delayed|day|night|away|vacation} (mode)
+  listen_for /\barm(?: the)? (.*?)(?: in)? (day|night|away|vacation|day instant|night delayed)(?: mode)?\b/i do |mode|
     area = find_object_by_name @areas, area_name
   
     if area.nil?
@@ -74,28 +137,20 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         oid = area["oid"]
 
         case mode.downcase
-        when "disarm"
-          api "helper.objectWithOID('#{oid}').setMode(0)"
-          say "Okay, the #{area_name} has been disarmed!"
-        when "arm day"
+        when "day"
           api "helper.objectWithOID('#{oid}').setMode(1)"
-          say "Arming the #{area_name} in mode day..."
-        when "arm night"
+        when "night"
           api "helper.objectWithOID('#{oid}').setMode(2)"
-          say "Arming the #{area_name} in mode night..."
-        when "arm away"
+        when "away"
           api "helper.objectWithOID('#{oid}').setMode(3)"
-          say "Arming the #{area_name} in mode away..."
-        when "arm vacation"
+        when "vacation"
           api "helper.objectWithOID('#{oid}').setMode(4)"
-          say "Arming the #{area_name} in mode vacation..."
-        when "arm day instant"
+        when "day instant"
           api "helper.objectWithOID('#{oid}').setMode(5)"
-          say "Arming the #{area_name} in mode day instant..."
-        when "arm night delayed"
+        when "night delayed"
           api "helper.objectWithOID('#{oid}').setMode(6)"
-          say "Arming the #{area_name} in mode night delayed..."
         end
+        say "Arming the #{area_name} in #{mode} mode..."
       else
         say "Sorry, your security code could not be validated."
       end
@@ -180,8 +235,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #{Macro|Button} {button_name}
-  listen_for /\b(?:macro|button) (.*)\b/i do |button_name|
+  #(Run) {macro|button} {button_name}
+  listen_for /\b(?:run )?(?:macro|button) (.*)\b/i do |button_name|
     button = find_object_by_name @buttons, button_name
   
     if button.nil?
@@ -265,17 +320,14 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         case property.downcase
         when "heat setpoint"
           api "helper.objectWithOID('#{oid}').setHeatSetpoint(#{value.to_f})"
-          say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
         when "cool setpoint"
           api "helper.objectWithOID('#{oid}').setCoolSetpoint(#{value.to_f})"
-          say "Okay, setting the #{thermostat_name} #{property} to #{value} degrees."
         when "humidify setpoint"
           api "helper.objectWithOID('#{oid}').setHumidifySetpoint(#{value.to_i})"
-          say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
         when "dehumidify setpoint"
           api "helper.objectWithOID('#{oid}').setDehumidifySetpoint(#{value.to_i})"
-          say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
         end
+        say "Okay, setting the #{thermostat_name} #{property} to #{value} percent."
       else
         say "Okay, I'll leave it as is."
       end
@@ -296,14 +348,12 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       case value.downcase
       when "automatic", "auto"
         api "helper.objectWithOID('#{oid}').setFan(0)"
-        say "Okay, setting the #{thermostat_name} fan setting to #{value}."
       when "always on", "on"
         api "helper.objectWithOID('#{oid}').setFan(1)"
-        say "Okay, setting the #{thermostat_name} fan setting to #{value}."
       when "cycle"
         api "helper.objectWithOID('#{oid}').setFan(2)"
-        say "Okay, setting the #{thermostat_name} fan setting to #{value}."
       end
+      say "Okay, setting the #{thermostat_name} fan setting to #{value}."
     end
 
     request_completed
@@ -389,7 +439,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #Set (the) {light_name} (in (the) {room_name}) to {0-100}
-  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)\%?$/i do |light_name, room_name, percent|
+  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)/i do |light_name, room_name, percent|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -595,7 +645,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #Helper reload
   listen_for /\bhelper reload\b/i do
-    say "Reloading configuration!"
+    say "Reloading HaikuHelper configuration!"
     reload_configuration
 
     request_completed
