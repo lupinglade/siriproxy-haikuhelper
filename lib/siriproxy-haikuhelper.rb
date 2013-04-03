@@ -216,7 +216,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Please say your security code to #{action} #{zone_name}:"
 
-      if(validate_security_code(response, @zone["area"]) > 0)
+      if(validate_security_code(response, zone["area"]) > 0)
         oid = zone["oid"]
 
         case action.downcase
