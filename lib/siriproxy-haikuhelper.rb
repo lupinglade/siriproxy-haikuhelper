@@ -65,7 +65,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   listen_for /\bdisarm(?: all areas)?$/i do
     response = ask "Please say your security code to disarm all areas:"
 
-    if(validate_security_code(response, area["number"]) > 0)
+    if(validate_security_code(response) > 0)
       api "controller.setAllAreasToMode(0)"
       say "Okay, all areas disarmed!"
     else
@@ -101,7 +101,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   listen_for /\barm(?: all areas)?(?: in)? (day|night|away|vacation|day instant|night delayed)(?: mode)?\b/i do |mode|
     response = ask "Please say your security code to #{mode} all areas:"
 
-    if(validate_security_code(response, area["number"]) > 0)
+    if(validate_security_code(response) > 0)
       case mode.downcase
       when "day"
         api "controller.setAllAreasToMode(1)"
@@ -216,7 +216,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Please say your security code to #{action} #{zone_name}:"
 
-      if(validate_security_code(response) > 0)
+      if(validate_security_code(response, @zone["area"]) > 0)
         oid = zone["oid"]
 
         case action.downcase
