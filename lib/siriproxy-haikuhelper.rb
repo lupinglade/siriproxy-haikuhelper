@@ -59,6 +59,10 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #{Disarm|Arm day instant|Arm night delayed|Arm day|Arm night|Arm away|Arm vacation} (the) {area_name}
   listen_for /\b(disarm|arm day instant|arm night delayed|arm day|arm night|arm away|arm vacation)(?: the)? (.*)\b/i do |mode,area_name|
+    if @areas.count == 1
+      area_name = @areas.first["bestDescription"]
+    end
+
     area = find_object_by_name @areas, area_name
   
     if area.nil?
@@ -385,7 +389,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #Set (the) {light_name} (in (the) {room_name}) to {0-100}
-  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)$/i do |light_name, room_name, percent|
+  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)\%?$/i do |light_name, room_name, percent|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -398,7 +402,11 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = unit["oid"]
 
       api "helper.objectWithOID('#{oid}').setLevel(#{percent.to_i})"
-      say "Okay, unit #{light_name} in the #{room_name} has been set to #{percent}%."
+      if room_name.nil?
+        say "Okay, unit #{light_name} has been set to #{percent}%."
+      else
+        say "Okay, unit #{light_name} in the #{room_name} has been set to #{percent}%."
+      end
     end
 
     request_completed
