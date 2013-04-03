@@ -186,7 +186,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     if reader.nil?
       say "Sorry, I couldn't find an access control named #{reader_name}!"
     else
-      response = ask "Please say your security code to #{action} #{reader_name}:"
+      response = ask "Please say your security code to #{action} the #{reader_name}:"
 
       if(validate_security_code(response) > 0)
         oid = reader["oid"]
@@ -194,10 +194,10 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         case action.downcase
         when "unlock"
           api "helper.objectWithOID('#{oid}').unlock()"
-          say "Okay, #{reader_name} has been unlocked."
+          say "Okay, the #{reader_name} has been unlocked."
         when "lock"
           api "helper.objectWithOID('#{oid}').lock()"
-          say "Okay, #{reader_name} has been lock."
+          say "Okay, the #{reader_name} has been lock."
         end
       else
         say "Sorry, your security code could not be validated."
@@ -214,7 +214,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     if zone.nil?
       say "Sorry, I couldn't find a zone named #{zone_name}!"
     else
-      response = ask "Please say your security code to #{action} #{zone_name}:"
+      response = ask "Please say your security code to #{action} the #{zone_name}:"
 
       if(validate_security_code(response, zone["area"]) > 0)
         oid = zone["oid"]
@@ -222,10 +222,10 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         case action.downcase
         when "bypass"
           api "helper.objectWithOID('#{oid}').bypass()"
-          say "Okay, #{zone_name} has been bypassed."
+          say "Okay, the #{zone_name} has been bypassed."
         when "restore"
           api "helper.objectWithOID('#{oid}').restore()"
-          say "Okay, #{zone_name} has been restored."
+          say "Okay, the #{zone_name} has been restored."
         end
       else
         say "Sorry, your security code could not be validated."
