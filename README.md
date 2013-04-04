@@ -190,7 +190,9 @@ The last one reloads the object names from the HaikuHelper API, which is useful 
 * Change the basement heat setpoint to 21 degrees
 * Change the loft fan setting to automatic
 * Turn off the chandelier in the living room
-* Turn off the fireplace pot lights
+* Turn on the fireplace pot lights
+* Dim the chandelier in the foyer
+* Change the fireplace pot lights level to 50 percent
 * Turn all lights off
 * What is the sunset time?
 
