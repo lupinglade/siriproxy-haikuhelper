@@ -1,6 +1,6 @@
 # siriproxy-haikuhelper
 
-Integrates HaikuHelper with Siri-Proxy.
+Integrates HaikuHelper with Siri-Proxy. This allows you to control your HAI smarthome via Siri.
 
 ## Requirements
 
