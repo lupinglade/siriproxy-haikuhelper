@@ -194,6 +194,9 @@ The last one reloads the object names from the HaikuHelper API, which is useful 
 * Dim the chandelier in the foyer
 * Change the fireplace pot lights level to 50 percent
 * Turn all lights off
+* What is the outdoor humidity?
+* What is the front door zone status?
+* What is the temperature on the main level?
 * What is the sunset time?
 
 Note: this plugin will match by best available description for an object, ie. it will first try to match a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to match the name set on the controller. Hence, you can tweak the names of objects in HaikuHelper's Object Editor to make it easier to control your system via Siri.
