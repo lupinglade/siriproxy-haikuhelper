@@ -177,9 +177,9 @@ required
 
 The last one reloads the object names from the HaikuHelper API, which is useful if you've renamed some objects or added new ones.
 
-> Note: this plugin will match the best available description for an object, ie. it will first try to use a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to use the name set on the controller.
+Note: this plugin will match the best available description for an object, ie. it will first try to use a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to use the name set on the controller.
 
-> Note 2: the vocabulary will be expanding and changing as the project matures.
+Note 2: the vocabulary will be expanding and changing as the project matures.
 
 ## License
 
