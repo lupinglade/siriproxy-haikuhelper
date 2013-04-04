@@ -188,6 +188,7 @@ The last one reloads the object names from the HaikuHelper API, which is useful 
 * Mute the audio in the basement
 * Change the great room source to the radio
 * Change the basement heat setpoint to 21 degrees
+* Change the loft fan setting to automatic
 * Turn off the chandelier in the living room
 * Turn off the fireplace pot lights
 * Turn all lights off
