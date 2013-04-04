@@ -4,9 +4,11 @@ Integrates HaikuHelper with Siri-Proxy.
 
 ## Requirements
 
-* HaikuHelper 2.90 or later (running on a machine that is always on)
+* [HaikuHelper 2.90 or later](http://www.haikuautomation.com/products/haikuhelper) (running on a machine that is always on)
 * httparty (gem dependency, auto-installed)
-* siriproxy
+* [SiriProxy][http://github.com/plamoni/SiriProxy]
+
+Note: the Install guide below covers installation of everything but HaikuHelper.
 
 ## Install
 
