@@ -114,7 +114,7 @@ sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
 
 * Tell your phone to use your SiriProxy server's IP as its DNS server (under Settings > Wi-Fi > Your network)
 
-* Test the server by telling Siri "system status"
+* Test the server by telling Siri "helper status" or "system status"
 
 Note: You can update siriproxy and siriproxy-haikuhelper in the future by running:
 
