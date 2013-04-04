@@ -128,11 +128,9 @@ Note: Further information on installing SiriProxy is available on the project's 
 
 Then, once you have it working, here are some of the commands, many can be prefixed/suffixed as you wish. The format of this section is:
 
-```
 required
-{required} or {required|choose|one|of}
-(optional) or (optional|choose|one|of)
-```
+**required** or **required|choose|one|of**
+*optional* or *optional|choose|one|of*
 
 ### Control commands:
 
