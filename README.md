@@ -132,7 +132,7 @@ required
 (optional)
 ```
 
-Control commands:
+### Control commands:
 
 * Disarm (all areas)
 * Disarm (the) {area_name}
@@ -155,7 +155,7 @@ Control commands:
 * {Set|Change} (the) {light_name} (level) (in (the) {room_name}) to {0-100} (percent)
 * {Set|Change} (the) {room_name} scene to {a|b|c|d|one|two|three|four}
 
-Query commands:
+### Query commands:
 
 * What is the energy cost?
 * What is the {area_name} area {status|mode}?
@@ -166,7 +166,7 @@ Query commands:
 * What is the {value|high setpoint|low setpoint} for (the) {sensor_name}?
 * What time is (the) {sunrise|sunset}?
 
-System commands:
+### System commands:
 
 * System status
 * System notices
@@ -177,11 +177,11 @@ System commands:
 
 The last one reloads the object names from the HaikuHelper API, which is useful if you've renamed some objects or added new ones.
 
-Note: this plugin will match the best available description for an object, ie. it will first try to use a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to use the name set on the controller.
+> Note: this plugin will match the best available description for an object, ie. it will first try to use a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to use the name set on the controller.
 
-Note 2: the vocabulary will be expanding and changing as the project matures.
+> Note 2: the vocabulary will be expanding and changing as the project matures.
 
-### License
+## License
 
 MIT
 
