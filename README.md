@@ -130,8 +130,8 @@ Then, once you have it working, here are some of the commands, many can be prefi
 
 ```
 required
-{choose|one|of}
-(optional)
+{required} or {required|choose|one|of}
+(optional) or (optional|choose|one|of)
 ```
 
 ### Control commands:
