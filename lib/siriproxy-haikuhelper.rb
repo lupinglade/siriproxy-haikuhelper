@@ -29,6 +29,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
     @readers = api "controller.accessControlReaders"
     @areas = api "controller.areas"
+    @audio_sources = api "controller.audioSources"
     @audio_zones = api "controller.audioZones"
     @auxiliary_sensors = api "controller.auxiliarySensors"
     @buttons = api "controller.buttons"
@@ -244,7 +245,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     else
       response = ask "Are you sure you wish to activate button #{button_name}?"
 
-      if(response =~ CONFIRM_REGEX)
+      if response =~ CONFIRM_REGEX
         oid = button["oid"]
         api "helper.objectWithOID('#{oid}').activate()"
         say "Okay, button #{button_name} activated."
@@ -256,13 +257,13 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #All {audio|audio zones} {on|off|mute|unmute}
-  listen_for /\ball (?:audio|audio zones) (on|off|mute|unmute)\b/i do |action|
-    case action
-    when "on"
+  #{Turn on|Turn off|Mute|Unmute} all audio (zones)
+  listen_for /\b(turn on|turn off|mute|unmute) all audio(?: zones)?\b/i do |action|
+    case action.downcase
+    when "turn on"
       api "controller.sendAllAudioZonesOnCommand()"
       say "Okay, all audio zones have been turned on."
-    when "off"
+    when "turn off"
       api "controller.sendAllAudioZonesOffCommand()"
       say "Okay, all audio zones have been turned off."
     when "mute"
@@ -276,8 +277,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #Audio {on|off|mute|unmute} in (the) {audio_zone_name}
-  listen_for /\baudio (on|off|mute|unmute) in(?: the)? (.*)\b/i do |action,audio_zone_name|
+  #{Turn on|Turn off|Mute|Unmute|Rewind|Previous|Repeat|Skip|Next|Forward|Play|Pause|Unpause} (the) {audio|music|song|track} in (the) {audio_zone_name}
+  listen_for /\b(turn on|turn off|mute|unmute|rewind|previous|last|skip|next|forward|play|pause|unpause) (?:the )?(?:audio|music|song|track) in (?:the )?(.*)/i do |action,audio_zone_name|
     audio_zone = find_object_by_name @audio_zones, audio_zone_name
   
     if audio_zone.nil?
@@ -286,26 +287,70 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = audio_zone["oid"]
 
       case action.downcase
-      when "on"
+      when "turn on"
         api "helper.objectWithOID('#{oid}').on()"
-        say "Okay, #{audio_zone_name} audio has been turned on."
-      when "off"
+        say "Okay, the #{audio_zone_name} audio zone has been turned on."
+      when "turn off"
         api "helper.objectWithOID('#{oid}').off()"
-        say "Okay, #{audio_zone_name} audio has been turned off."
+        say "Okay, the #{audio_zone_name} audio zone has been turned off."
       when "mute"
         api "helper.objectWithOID('#{oid}').mute()"
-        say "Okay, #{audio_zone_name} audio has been muted."
+        say "Okay, the #{audio_zone_name} audio zone has been muted."
       when "unmute"
         api "helper.objectWithOID('#{oid}').unmute()"
-        say "Okay, #{audio_zone_name} audio has been unmuted."
+        say "Okay, the #{audio_zone_name} audio zone has been unmuted."
+      when "rewind", "previous", "repeat"
+        api "helper.objectWithOID('#{oid}').sendCommandForFeature('HAIAudioZoneFeatureRewindButton')"
+        say "Okay, I've sent the '#{action}' command to the #{audio_zone_name} audio zone."
+      when "skip", "next", "forward"
+        api "helper.objectWithOID('#{oid}').sendCommandForFeature('HAIAudioZoneFeatureForwardButton')"
+        say "Okay, I've sent the '#{action}' command to the #{audio_zone_name} audio zone."
+      when "play", "pause", "unpause"
+        api "helper.objectWithOID('#{oid}').sendCommandForFeature('HAIAudioZoneFeaturePlayPauseButton')"
+        say "Okay, I've sent the '#{action}' command to the #{audio_zone_name} audio zone."
       end
     end
 
     request_completed
   end
 
-  #Set the (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
-  listen_for /\bset (?:the )?(.*?) (heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint) to (-?1?[0-9][0-9]?\.?[0-9]?)/i do |thermostat_name, property, value|
+  #{Set|Change} (the) {audio_zone_name} source to (the) {audio_source_name}
+  listen_for /\b(?:set|change)(?: the)? (.*?) source to(?: the)? (.*)/i do |audio_zone_name,audio_source_name|
+    audio_source = find_object_by_name @audio_zones, audio_source_name
+    audio_zone = find_object_by_name @audio_zones, audio_zone_name
+  
+    if audio_zone.nil?
+      say "Sorry, I couldn't find an audio zone named #{audio_zone_name}!"
+    elsif audio_source.nil?
+      say "Sorry, I couldn't find an audio source named #{audio_source_name}!"
+    else
+      oid = audio_zone["oid"]
+
+      api "helper.objectWithOID('#{oid}').setSource(#{audio_source['number']})"
+      say "Okay, the #{audio_zone_name} audio zone source has been set to #{audio_source_name}."
+    end
+
+    request_completed
+  end
+
+  #{Set|Change} (the) {audio_zone_name} volume to {0-100} (percent)
+  listen_for /\b(?:set|change)(?: the)? (.*?) volume to (1?[0-9][0-9]?)/i do |audio_zone_name, value|
+    audio_zone = find_object_by_name @audio_zones, audio_zone_name
+  
+    if audio_zone.nil?
+      say "Sorry, I couldn't find an audio zone named #{light_name}!"
+    else
+      oid = audio_zone["oid"]
+
+      api "helper.objectWithOID('#{oid}').setVolume(#{value.to_i})"
+      say "Okay, the #{light_name} audio volume has been set to #{value}%."
+    end
+
+    request_completed
+  end
+
+  #{Set|Change} (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
+  listen_for /\b(?:set|change) (?:the )?(.*?) (heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint) to (-?1?[0-9][0-9]?\.?[0-9]?)/i do |thermostat_name, property, value|
     thermostat = find_object_by_name @thermostats, thermostat_name
   
     if thermostat.nil?
@@ -316,7 +361,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       units = (property == "heat setpoint" or property == "cool setpoint") ? "degrees" : "percent"
       response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value} #{units}?"
 
-      if(response =~ CONFIRM_REGEX)
+      if response =~ CONFIRM_REGEX
         case property.downcase
         when "heat setpoint"
           api "helper.objectWithOID('#{oid}').setHeatSetpoint(#{value.to_f})"
@@ -336,7 +381,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #Set the (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
+  #{Set|Change} the (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
   listen_for /\bset (?:the )?(.*?) fan setting to (automatic|auto|always on|on|cycle)\b/i do |thermostat_name, value|
     thermostat = find_object_by_name @thermostats, thermostat_name
   
@@ -359,8 +404,29 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #Set the (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
-  listen_for /\bset (?:the )?(.*?) (high setpoint|low setpoint) to (-?1?[0-9][0-9]?\.?[0-9]?)/i do |sensor_name, property, value|
+  #{Set|Change} the (the) {thermostat_name} hold setting to {on|off}
+  listen_for /\b(?:set|change) (?:the )?(.*?) hold setting to (on|off)\b/i do |thermostat_name, value|
+    thermostat = find_object_by_name @thermostats, thermostat_name
+  
+    if thermostat.nil?
+      say "Sorry, I couldn't find a thermostat named #{thermostat_name}!"
+    else
+      oid = thermostat["oid"]
+
+      case value.downcase
+      when "on"
+        api "helper.objectWithOID('#{oid}').setHold(0)"
+      when "off"
+        api "helper.objectWithOID('#{oid}').setHold(1)"
+      end
+      say "Okay, setting the #{thermostat_name} hold setting to #{value}."
+    end
+
+    request_completed
+  end
+
+  #{Set|Change} the (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
+  listen_for /\b(?:set|change) (?:the )?(.*?) (high setpoint|low setpoint) to (-?1?[0-9][0-9]?\.?[0-9]?)/i do |sensor_name, property, value|
     sensor = find_object_by_name @auxiliary_sensors, sensor_name
   
     if sensor.nil?
@@ -371,7 +437,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       units = (sensor["kind"] != 84) ? "degrees" : "percent"
       response = ask "Are you sure you wish to set the #{thermostat_name} #{property} to #{value} #{units}?"
 
-      if(response =~ CONFIRM_REGEX)
+      if response =~ CONFIRM_REGEX
         case property.downcase
         when "high setpoint"
           api "helper.objectWithOID('#{oid}').setHighSetpoint(#{value.to_f})"
@@ -388,11 +454,11 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #All lights {on|off}
-  listen_for /\ball lights (on|off)\b/i do |action|
+  #(Turn) all lights {on|off}
+  listen_for /\b(?:turn )?all lights (on|off)\b/i do |action|
     response = ask "Are you sure you want to turn #{action} all of the lights?"
 
-    if(response =~ CONFIRM_REGEX)
+    if response =~ CONFIRM_REGEX
       if action == "on"
         api "controller.sendAllLightsOnCommand()"
       else
@@ -407,7 +473,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #{Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
-  listen_for /\b(turn on|turn off|brighten|dim)(?: the )?(.*?)(?: in (?:the )?(.*?))?$/i do |action, light_name, room_name|
+  listen_for /\b(turn on|turn off|brighten|dim)(?:the )?(.*?)(?: in (?:the )?(.*?))?$/i do |action, light_name, room_name|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -438,8 +504,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #Set (the) {light_name} (in (the) {room_name}) to {0-100}
-  listen_for /\bset(?: the)? (.*?)(?: in (?:the )?(.*?))? to (1?[0-9][0-9]?)/i do |light_name, room_name, percent|
+  #{Set|Change} (the) {light_name} (level) (in (the) {room_name}) to {0-100} (percent)
+  listen_for /\b(?:set|change) (?: the)?(.*?)(?: level)?(?: in(?: the)?(.*?))? to (1?[0-9][0-9]?)/i do |light_name, room_name, percent|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -462,8 +528,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #Set scene {a|b|c|d} in (the) {room_name}
-  listen_for /\bscene (a|b|c|d) in(?: the)? (.*)/i do |scene, room_name|
+  #{Set|Change} (the) {room_name} scene to {a|b|c|d|one|two|three|four}
+  listen_for /\b(?:set|change) (?:the )?(.*?) scene to (a|b|c|d|one|two|three|four)\b/i do |room_name,scene|
     unit = find_room_unit room_name
   
     if unit.nil?
@@ -472,16 +538,16 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
       oid = unit["oid"]
 
       case scene.downcase
-      when "a"
+      when "a", "one"
         api "helper.objectWithOID('#{oid}').setScene(1)"
         say "Setting scene A in the #{room_name}"
-      when "b"
+      when "b", "two"
         api "helper.objectWithOID('#{oid}').setScene(2)"
         say "Setting scene B in the #{room_name}"
-      when "c"
+      when "c", "three"
         api "helper.objectWithOID('#{oid}').setScene(3)"
         say "Setting scene C in the #{room_name}"
-      when "d"
+      when "d", "four"
         api "helper.objectWithOID('#{oid}').setScene(4)"
         say "Setting scene D in the #{room_name}"
       end
@@ -624,7 +690,28 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
+  #What time is (the) {sunrise|sunset}?
+  listen_for /\bwhat time is(?: the)? (sunrise|sunset)\b/i do |property|
+    sunrise = api "controller.#{property}Description"
+    say "The #{property} will begin at #{sunrise}."
+
+    request_completed
+  end
+
   #System commands
+
+  #System status
+  listen_for /\bsystem status\b/i do
+    status = api "controller.statusDescription"
+    troubles = api "controller.troubles.troublesDescription"
+    @areas = api "controller.areas"
+
+    area_statuses = @areas.map { |area| area = "#{area["bestDescription"]} status: #{area["alarmsDescription"]}, mode: #{area["modeDescription"]}." }
+
+    say "Connection status: #{status}. Troubles: #{troubles}. #{area_statuses.join(', ')}"
+
+    request_completed
+  end
 
   #System notices
   listen_for /\bsystem notices\b/i do
@@ -634,11 +721,41 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #System status
-  listen_for /\bsystem status\b/i do
+  #System messages
+  listen_for /\bsystem messages\b/i do
+    @messages = api "controller.messages"
+
+    unread_messages = @messages.select { |message| message["isUnacknowledged"] }
+    unread_messages.map! { |message| message = message["bestDescription"] }
+
+    unless unread_messages.count == 0
+      say "The unacknowledged system messages are: #{unread_messages.join(', ')}."
+    else
+      say "There are no unacknowledged messages."
+    end
+
+    request_completed
+  end
+
+  #Helper status
+  listen_for /\bhelper status\b/i do
     status = api "controller.statusDescription"
     version = api "helper.version"
-    say "HaikuHelper control is available, remote helper version is: #{version}, status is: #{status}"
+    say "HaikuHelper control is available, remote helper version is: #{version}, status is: #{status}."
+
+    request_completed
+  end
+
+  #Helper send notification
+  listen_for /\bhelper send notification\b/i do
+    response = ask "What would you like the notification to say?"
+
+    if response != "cancel"
+      api "helper.sendNotification(controller, \"#{response} (sent via Siri)\")"
+      say "Notification sent."
+    else
+      say "Okay, cancelled."
+    end
 
     request_completed
   end

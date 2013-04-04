@@ -142,15 +142,18 @@ Control commands:
 * {Lock|Unlock} (the) {reader_name}
 * {Bypass|Restore} (the) {zone_name}
 * (Run) {macro|button} {button_name}
-* All {audio|audio zones} {on|off|mute|unmute}
-* Audio {on|off|mute|unmute} in (the) {audio_zone_name}
-* Set the (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
-* Set the (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
-* Set the (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
+* {Turn on|Turn off|Mute|Unmute} all audio (zones)
+* {Turn on|Turn off|Mute|Unmute|Rewind|Previous|Repeat|Skip|Forward|Next|Play|Pause|Unpause} (the) {audio|music|song|track} in (the) {audio_zone_name}
+* {Set|Change} (the) {audio_zone_name} source to (the) {audio_source_name}
+* {Set|Change} (the) {audio_zone_name} volume to {0-100} (percent)
+* {Set|Change} (the) {thermostat_name} {heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint} to (negative) {0.0-100.0} (degrees|percent)
+* {Set|Change} (the) {thermostat_name} fan setting to {automatic|auto|always on|on|cycle}
+* {Set|Change} (the) {thermostat_name} hold setting to {on|off}
+* {Set|Change} (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
 * (Turn) all lights {on|off}
 * {Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
-* Set (the) {light_name} (in (the) {room_name}) to {0-100} (percent)
-* Set scene {a|b|c|d} in (the) {room_name}
+* {Set|Change} (the) {light_name} (level) (in (the) {room_name}) to {0-100} (percent)
+* {Set|Change} (the) {room_name} scene to {a|b|c|d|one|two|three|four}
 
 Query commands:
 
@@ -161,11 +164,15 @@ Query commands:
 * What is the outdoor humidity?
 * What is the {temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
 * What is the {value|high setpoint|low setpoint} for (the) {sensor_name}?
+* What time is (the) {sunrise|sunset}?
 
 System commands:
 
 * System status
 * System notices
+* System messages
+* Helper status
+* Helper send notification
 * Helper reload
 
 The last one reloads the object names from the HaikuHelper API, which is useful if you've renamed some objects or added new ones.
