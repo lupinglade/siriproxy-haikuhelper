@@ -181,6 +181,10 @@ Note: this plugin will match the best available description for an object, ie. i
 
 Note 2: the vocabulary will be expanding and changing as the project matures.
 
+### License
+
+MIT
+
 ## Links
 
 * https://github.com/plamoni/SiriProxy
