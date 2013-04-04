@@ -166,7 +166,7 @@ required
 * What is the outdoor humidity?
 * What is the {temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
 * What is the {value|high setpoint|low setpoint} for (the) {sensor_name}?
-* What time is (the) {sunrise|sunset}?
+* What time is (the) {sunrise|sunset} (time)?
 
 ### System commands:
 
@@ -179,7 +179,21 @@ required
 
 The last one reloads the object names from the HaikuHelper API, which is useful if you've renamed some objects or added new ones.
 
-Note: this plugin will match the best available description for an object, ie. it will first try to use a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to use the name set on the controller.
+### Examples:
+
+* Disarm all areas
+* Arm the garage in away mode
+* Bypass the front door
+* Skip the song in the great room
+* Mute the audio in the basement
+* Change the great room source to the radio
+* Change the basement heat setpoint to 21 degrees
+* Turn off the chandelier in the living room
+* Turn off the fireplace pot lights
+* Turn all lights off
+* What is the sunset time?
+
+Note: this plugin will match by best available description for an object, ie. it will first try to match a "description" as set in HaikuHelper (via Window -> Object Editor), if not available it will try to match the name set on the controller. Hence, you can tweak the names of objects in HaikuHelper's Object Editor to make it easier to control your system via Siri.
 
 Note 2: the vocabulary will be expanding and changing as the project matures.
 

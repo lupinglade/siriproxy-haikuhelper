@@ -690,8 +690,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #What time is (the) {sunrise|sunset}?
-  listen_for /\bwhat time is(?: the)? (sunrise|sunset)\b/i do |property|
+  #What time is (the) {sunrise|sunset} (time)?
+  listen_for /\bwhat time is(?: the)? (sunrise|sunset)(?: time)?\b/i do |property|
     sunrise = api "controller.#{property}Description"
     say "The #{property} will begin at #{sunrise}."
 
