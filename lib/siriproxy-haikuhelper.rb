@@ -16,7 +16,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
   #HH API shorthand
   def api(cmd)
-    @helper.api cmd
+    @helper.api(cmd)
   end
 
   #Reloads configuration from the HaikuHelper server
@@ -198,7 +198,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
           say "Okay, the #{reader_name} has been unlocked."
         when "lock"
           api "helper.objectWithOID('#{oid}').lock()"
-          say "Okay, the #{reader_name} has been lock."
+          say "Okay, the #{reader_name} has been locked."
         end
       else
         say "Sorry, your security code could not be validated."
