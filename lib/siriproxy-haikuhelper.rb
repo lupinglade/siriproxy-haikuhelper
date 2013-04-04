@@ -473,7 +473,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #{Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
-  listen_for /\b(turn on|turn off|brighten|dim)(?:the )?(.*?)(?: in (?:the )?(.*?))?$/i do |action, light_name, room_name|
+  listen_for /\b(turn on|turn off|brighten|dim) (?:the )?(.*?)(?: in (?:the )?(.*?))?$/i do |action, light_name, room_name|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -708,7 +708,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
     area_statuses = @areas.map { |area| area = "#{area["bestDescription"]} status: #{area["alarmsDescription"]}, mode: #{area["modeDescription"]}." }
 
-    say "Connection status: #{status}. Troubles: #{troubles}. #{area_statuses.join(', ')}"
+    say "Connection status: #{status}. Troubles: #{troubles}. #{area_statuses.join(' ')}"
 
     request_completed
   end
