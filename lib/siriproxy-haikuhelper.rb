@@ -472,8 +472,8 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
     request_completed
   end
 
-  #{Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
-  listen_for /\b(turn on|turn off|brighten|dim) (?:the )?(.*?)(?: in (?:the )?(.*?))?$/i do |action, light_name, room_name|
+  #{Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name}) (for {1-60} {seconds|minutes|hours})
+  listen_for /\b(turn on|turn off|brighten|dim) (?:the )?(.*?)(?: in (?:the )?(.*?))?(?: for ([0-9]?[0-9]) (seconds|minutes|hours))?$/i do |action, light_name, room_name, duration, duration_type|
     unit = find_light_unit light_name, room_name
   
     if unit.nil?
@@ -487,11 +487,59 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
 
       case action.downcase
       when "turn on"
-        api "helper.objectWithOID('#{oid}').on()"
-        say "Okay, unit #{light_name} turned on."
+        case duration_type
+        when "seconds"
+          if 1 <= duration <= 99
+            api "helper.objectWithOID('#{oid}').onForSeconds(#{duration})"
+            say "Okay, unit #{light_name} turned on for #{duration} #{duration_type}."
+          else
+            say "Sorry, I can only set a timer for 1 to 99 seconds, 1 to 99 minutes or 1 to 18 hours."
+          end
+        when "minutes"
+          if 1 <= duration <= 99
+            api "helper.objectWithOID('#{oid}').onForMinutes(#{duration})"
+            say "Okay, unit #{light_name} turned on for #{duration} #{duration_type}."
+          else
+            say "Sorry, I can only set a timer for 1 to 99 seconds, 1 to 99 minutes or 1 to 18 hours."
+          end
+        when "hours"
+          if 1 <= duration <= 18
+            api "helper.objectWithOID('#{oid}').onForHours(#{duration})"
+            say "Okay, unit #{light_name} turned on for #{duration} #{duration_type}."
+          else
+            say "Sorry, I can only set a timer for 1 to 99 seconds, 1 to 99 minutes or 1 to 18 hours."
+          end
+        else
+          api "helper.objectWithOID('#{oid}').on()"
+          say "Okay, unit #{light_name} turned on."
+        end
       when "turn off"
-        api "helper.objectWithOID('#{oid}').off()"
-        say "Okay, unit #{light_name} turned off."
+        case duration_type
+        when "seconds"
+          if 1 <= duration <= 99
+            api "helper.objectWithOID('#{oid}').offForSeconds(#{duration})"
+            say "Okay, unit #{light_name} turned off for #{duration} #{duration_type}."
+          else
+            say "Sorry, I can only set a timer for 1 to 99 seconds, 1 to 99 minutes or 1 to 18 hours."
+          end
+        when "minutes"
+          if 1 <= duration <= 99
+            api "helper.objectWithOID('#{oid}').offForMinutes(#{duration})"
+            say "Okay, unit #{light_name} turned off for #{duration} #{duration_type}."
+          else
+            say "Sorry, I can only set a timer for 1 to 99 seconds, 1 to 99 minutes or 1 to 18 hours."
+          end
+        when "hours"
+          if 1 <= duration <= 18
+            api "helper.objectWithOID('#{oid}').offForHours(#{duration})"
+            say "Okay, unit #{light_name} turned off for #{duration} #{duration_type}."
+          else
+            say "Sorry, I can only set a timer for 1 to 99 seconds, 1 to 99 minutes or 1 to 18 hours."
+          end
+        else
+          api "helper.objectWithOID('#{oid}').off()"
+          say "Okay, unit #{light_name} turned off."
+        end
       when "brighten"
         api "helper.objectWithOID('#{oid}').brighten(2)"
         say "Okay, unit #{light_name} brightened."

@@ -153,7 +153,7 @@ required
 * {Set|Change} (the) {thermostat_name} hold setting to {on|off}
 * {Set|Change} (the) {sensor_name} {high setpoint|low setpoint} to (negative) {0.0-100.0} (degrees|percent)
 * (Turn) all lights {on|off}
-* {Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name})
+* {Turn on|Turn off|Brighten|Dim} (the) {light_name} (in (the) {room_name}) (for {1-60} {seconds|minutes|hours})
 * {Set|Change} (the) {light_name} (level) (in (the) {room_name}) to {0-100} (percent)
 * {Set|Change} (the) {room_name} scene to {a|b|c|d|one|two|three|four}
 
