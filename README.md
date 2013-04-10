@@ -143,7 +143,7 @@ required
 * {Lock|Unlock} all (the|of the) {locks|readers|access control readers}
 * {Lock|Unlock} (the) {reader_name}
 * {Bypass|Restore} (the) {zone_name}
-* (Run) {macro|button} {button_name}
+* (Run) (the) {button_name} {button|macro}
 * {Turn on|Turn off|Mute|Unmute} all audio (zones)
 * {Turn on|Turn off|Mute|Unmute|Rewind|Previous|Repeat|Skip|Forward|Next|Play|Pause|Unpause} (the) {audio|music|song|track} in (the) {audio_zone_name}
 * {Set|Change} (the) {audio_zone_name} source to (the) {audio_source_name}
@@ -160,8 +160,8 @@ required
 ### Query commands:
 
 * What is the energy cost?
-* What is the {area_name} area {status|mode}?
-* What is the {zone_name} zone status?
+* What is (the) {area_name} area {status|mode}?
+* What is (the) {zone_name} zone status?
 * What is the outdoor temperature?
 * What is the outdoor humidity?
 * What is the {temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
