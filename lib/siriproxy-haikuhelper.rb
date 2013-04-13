@@ -709,7 +709,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
   end
 
   #What is the {temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting} {in|on|at|for} (the) {thermostat_name}?
-  listen_for /\bwhat is the (temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting) (in|on|at|for)(?: the)? #{OBJECT_GREEDY}\b/i do |property,prep,thermostat_name|
+  listen_for /\bwhat is the (temperature|humidity|heat setpoint|cool setpoint|humidify setpoint|dehumidify setpoint|mode|fan setting) (in|on|at|for) #{OBJECT_GREEDY}\b/i do |property,prep,thermostat_name|
     thermostat = find_object_by_name @thermostats, thermostat_name
 
     if thermostat.nil?
