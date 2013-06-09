@@ -78,6 +78,8 @@ cp ~/.rvm/gems/ruby-2.0.0-p0/gems/siriproxy-0.5.4/config.example.yml ~/.siriprox
       password: 'secret'
 ```
 
+* Tip: Be careful to use exact spacing in the config.yml file as the YML format is indentation-sensitive.
+
 * You can also update the config.yml file to set server_ip to the LAN IP of the machine that will be running SiriProxy and the user, which means you won't need to pass them later when you start siriproxy.
 
 * Run the siriproxy command to bundle the siriproxy-haikuhelper plugin:
