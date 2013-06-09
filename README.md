@@ -65,7 +65,7 @@ mkdir ~/.siriproxy
 * Copy over the example configuration file to your siriproxy configuration directory:
 
 ```
-cp ~/.rvm/gems/ruby-2.0.0-p0/gems/siriproxy-0.5.3/config.example.yml ~/.siriproxy/config.yml
+cp ~/.rvm/gems/ruby-2.0.0-p0/gems/siriproxy-0.5.4/config.example.yml ~/.siriproxy/config.yml
 ```
 
 * Edit the ~/.siriproxy/config.yml file using a text/code editor and add this entry to the plugin section with the proper values:
