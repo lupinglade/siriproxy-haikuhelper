@@ -119,7 +119,7 @@ class SiriProxy::Plugin::HaikuHelper < SiriProxy::Plugin
         oid = area["oid"]
 
         api "helper.objectWithOID('#{oid}').setMode(0)"
-        say "Okay, the {area_name} area has been disarmed!"
+        say "Okay, the #{area_name} area has been disarmed!"
       else
         say "Sorry, your security code could not be validated."
       end
